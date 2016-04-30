@@ -1,4 +1,4 @@
-﻿# OSX Defaults
+# OSX Defaults
 defaults write com.apple.Finder AppleShowAllFiles YES
 defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
 defaults write com.apple.Finder FXPreferredViewStyle Nlsv
@@ -43,4 +43,3 @@ brew cask install iterm2
 # Environment/Framework/Etc
 brew install node mongo robomongo
 curl https://install.meteor.com/ | sh
-
