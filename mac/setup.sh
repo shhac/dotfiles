@@ -44,8 +44,8 @@ brew tap caskroom/cask
 # 1. Install
 brew install git
 # 2. Configure
-sh -c "$(curl -fsSL https://raw.github.com/shhac/setup/master/git/settings.sh)"
-sh -c "$(curl -fsSL https://raw.github.com/shhac/setup/master/git/aliases.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/settings.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/aliases.sh)"
 
 #################################################
 # Powerline fonts

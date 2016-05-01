@@ -1,5 +1,5 @@
 # Mac
 
 ```
-sh -c "$(curl -fsSL https://raw.github.com/shhac/setup/master/mac/setup.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/setup.sh)"
 ```
