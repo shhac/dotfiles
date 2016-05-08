@@ -25,3 +25,8 @@ set bs=2
 set number
 ```
 
+# iTerm2
+
+[**Duotone Dark**](https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/schemes/Duotone%20Dark.itermcolors)
+
+
