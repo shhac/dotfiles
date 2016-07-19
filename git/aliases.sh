@@ -24,6 +24,7 @@ git config --global alias.likenew '!git clean -fdx && git reset HEAD --'
 git config --global alias.forget 'checkout --'
 git config --global alias.radd '!git rm -r --cached . && git add .'
 git config --global alias.up '!git checkout master && git fetch && git pull && git checkout @{-1} && git merge master'
+git config --global alias.rim 'rebase -i master'
 
 git config --global alias.sup 'submodule update --init --recursive'
 git config --global alias.coz '!f(){ git checkout "$@" && git submodule update --init --recursive; }; f'
