@@ -33,4 +33,5 @@ git config --global alias.coz '!f(){ git checkout "$@" && git submodule update -
 git config --global alias.colz '!git checkout @{-1} && git submodule update --init --recursive'
 git config --global alias.comz '!git checkout master && git submodule update --init --recursive'
 git config --global alias.plz '!git pull && git submodule update --init --recursive'
+git config --global alias.clz 'clone --recursive'
 
