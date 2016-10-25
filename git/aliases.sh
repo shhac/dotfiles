@@ -39,6 +39,6 @@ git config --global alias.plz '!git pull && git submodule update --init --recurs
 git config --global alias.clz 'clone --recursive'
 
 # Tig Aliases
-git config --global alias.history '!git reflog | tig'
+git config --global alias.history '!git reflog --pretty=raw | tig --pretty=raw'
 git config --global alias.bl '!tig blame --'
 
