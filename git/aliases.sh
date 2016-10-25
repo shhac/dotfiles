@@ -41,4 +41,5 @@ git config --global alias.clz 'clone --recursive'
 # Tig Aliases
 git config --global alias.history '!git reflog --pretty=raw | tig --pretty=raw'
 git config --global alias.bl '!tig blame --'
+git config --global alias.file '!tig --'
 
