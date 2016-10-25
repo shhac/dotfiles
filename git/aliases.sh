@@ -38,3 +38,7 @@ git config --global alias.comz '!git checkout master && git submodule update --i
 git config --global alias.plz '!git pull && git submodule update --init --recursive'
 git config --global alias.clz 'clone --recursive'
 
+# Tig Aliases
+git config --global alias.history '!git reflog | tig'
+git config --global alias.bl '!tig blame --'
+
