@@ -30,6 +30,7 @@ git config --global alias.ri 'rebase -i'
 git config --global alias.rim 'rebase -i master'
 git config --global alias.ric 'rebase --continue'
 git config --global alias.ria '!git rebase -i `git merge-base HEAD master`'
+git config --global alias.rih '!f(){ git rebase -i "HEAD~$@"; }; f'
 
 git config --global alias.sup 'submodule update --init --recursive'
 git config --global alias.coz '!f(){ git checkout "$@" && git submodule update --init --recursive; }; f'
