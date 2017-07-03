@@ -13,6 +13,7 @@ git config --global alias.cia 'commit -a'
 git config --global alias.cim 'commit -m'
 git config --global alias.ciam 'commit -am'
 git config --global alias.br 'branch'
+git config --global alias.brr 'branch -r'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.boom 'reset --hard HEAD'
 git config --global alias.dc 'diff --cached'
@@ -32,6 +33,11 @@ git config --global alias.ric 'rebase --continue'
 git config --global alias.ria '!git rebase -i `git merge-base HEAD master`'
 git config --global alias.rih '!f(){ git rebase -i "HEAD~$@"; }; f'
 
+# Merged branches
+git config --global alias.br-merged '!f(){ git branch --merged ${1-master} | cut -c 3- | grep -v ${1-master}; }; f'
+git config --global alias.brr-merged '!f(){ git branch -r --merged ${2-origin}/${1-master} | grep ${2-origin}/ | cut -c 3- | sed -e "s/^${2-origin}\/HEAD \-\> //" | grep -v ${2-origin}/${1-master} | cut -c $(echo "${2-origin}/." | awk '"'"'{print length}'"'"')-; }; f'
+
+# Submodules
 git config --global alias.sup 'submodule update --init --recursive'
 git config --global alias.coz '!f(){ git checkout "$@" && git submodule update --init --recursive; }; f'
 git config --global alias.colz '!git checkout @{-1} && git submodule update --init --recursive'
