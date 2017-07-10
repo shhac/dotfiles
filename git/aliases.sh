@@ -1,4 +1,5 @@
 # Git Aliases
+git config --global alias.f 'fetch'
 git config --global alias.a 'add'
 git config --global alias.last 'log -1 --stat'
 git config --global alias.cp 'cherry-pick'
