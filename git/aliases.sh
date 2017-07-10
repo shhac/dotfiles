@@ -29,11 +29,18 @@ git config --global alias.forget 'checkout --'
 git config --global alias.radd '!git rm -r --cached . && git add .'
 git config --global alias.up '!git checkout master && git fetch && git pull && git checkout @{-1} && git merge master'
 git config --global alias.mm 'merge master'
+
+# History rewriting
 git config --global alias.ri 'rebase -i'
 git config --global alias.rim 'rebase -i master'
 git config --global alias.ric 'rebase --continue'
 git config --global alias.ria '!git rebase -i `git merge-base HEAD master`'
 git config --global alias.rih '!f(){ git rebase -i "HEAD~$@"; }; f'
+git config --global alias.commend 'commit --amend --no-edit'
+git config --global alias.please 'push --force-with-lease'
+
+# New Repos
+git config --global alias.it '!f(){ git init; git commit -m "${1-Initial Commit}" --allow-empty; }; f'
 
 # Merged branches
 git config --global alias.br-merged '!f(){ git branch --merged ${1-master} | cut -c 3- | grep -v ${1-master}; }; f'
