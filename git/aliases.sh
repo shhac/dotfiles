@@ -53,7 +53,7 @@ git config --global alias.colz '!git checkout @{-1} && git submodule update --in
 git config --global alias.comz '!git checkout master && git submodule update --init --recursive'
 git config --global alias.plz '!git pull && git submodule update --init --recursive'
 git config --global alias.clz 'clone --recursive'
-git config --global alias.suff '!f(){ git submodule foreach "git checkout ${1-master} && git pull --ff-only && git submodule update --init --recursive;"; }; f'
+git config --global alias.suff '!f(){ echo "Submodule Target Branch: ${1-master}"; git submodule update --init --recursive && echo "\n" && git submodule foreach "git checkout ${1-master} && git pull --ff-only && git submodule update --init --recursive; echo "";"; }; f'
 
 # Tig Aliases
 git config --global alias.history '!git reflog --pretty=raw | tig --pretty=raw'
