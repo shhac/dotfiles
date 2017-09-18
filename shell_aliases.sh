@@ -30,3 +30,26 @@ mozjpeg() {
         /usr/local/opt/mozjpeg/bin/cjpeg -quality $1 "$2" -outfile "$3"
     fi
 }
+
+findMAC() {
+    echo "Current" $(route get google.com | grep interface)
+
+    BROADCAST_IP=$(ifconfig | grep broadcast | rev | cut -d " " -f1 | rev)
+    echo "Broadcast IP:" $BROADCAST_IP
+
+    MAP_RANGE=$(echo "$BROADCAST_IP" | rev | cut -d "." -f 2- | rev)
+    MAP_RANGE+=".0-255"
+    echo "Mapping:" $MAP_RANGE
+    nmap -T5 -sP $MAP_RANGE
+    echo
+    echo "MAC addresses for SSID" $1
+    airport -s | grep $1 | awk '{ print $2 }'
+    echo
+    echo "ARP"
+    arp -a | grep -v "(incomplete)"
+}
+
+findText() {
+    find . -name '*' -type f -exec grep "$@" {} \;
+}
+
