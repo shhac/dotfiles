@@ -1,7 +1,7 @@
 " Syntax Highlighting
 set t_Co=256
 syntax on
-colorscheme ir_black
+" colorscheme ir_black
 set bs=2
 
 " Enable Line Numbers
