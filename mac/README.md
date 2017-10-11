@@ -1,32 +1,6 @@
-# ZSH Configure
-
-Edit `~/.zshrc` with e.g.
+# Set up lots of OSX stuff
 
 ```
-# Theme
-ZSH_THEME="agnoster"
-
-# Default User (hides if true)
-DEFAULT_USER="Paul"
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/setup.sh)"
 ```
-
-# VIM Configure
-
-Edit `~/.vimrc` with e.g.
-
-```
-" Syntax Highlighting
-set t_Co=256
-syntax on
-colorscheme ir_black
-set bs=2
-
-" Enable Line Numbers
-set number
-```
-
-# iTerm2
-
-[**Duotone Dark**](https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/schemes/Duotone%20Dark.itermcolors)
-
 

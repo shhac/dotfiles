@@ -1,73 +1,39 @@
-#################################################
-# OSX Defaults
-# Show all files and extensions, in list mode
-defaults write com.apple.Finder AppleShowAllFiles YES
-defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
-defaults write com.apple.Finder FXPreferredViewStyle Nlsv
-sudo find / -name '.DS_Store' -exec rm {} \;
-chflags nohidden ~/Library
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-# Trackpad bottom right for right-click
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
-# Disable "natural" scrolling
-defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
-# Fast key repeat speed
-defaults write NSGlobalDomain ApplePressAndHoldEnabled -int 0
-defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
-# No swipe navigation in Chrome
-defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool FALSE
-# Save screenshots as PNG with no shadow to the desktop
-defaults write com.apple.screencapture location -string "${HOME}/Desktop"
-defaults write com.apple.screencapture type -string "png"
-defaults write com.apple.screencapture disable-shadow -bool true
-# Show icons for hard drives, servers, and removable media on the desktop
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
-defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
-# No automatic substitution
-defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+# OSX settings
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/osx-config.sh)"
 
-#################################################
-# ZSH
-# 1. Install
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-# 2. Theme
+# Shell
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/setup.sh)"
+echo "" >> ~/.zshrc
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/osx-shell.sh >> ~/.zshrc
 
-#################################################
 # Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew tap caskroom/cask
+brew upgrade
 
-#################################################
-# Git
-# 1. Install
+# git
 brew install git
-# 2. Configure
-sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/settings.sh)"
-sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/aliases.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/setup.sh)"
 
-#################################################
-# Powerline fonts
-git clone https://github.com/powerline/fonts ~/powerline-fonts
-~/powerline-fonts/install.sh
-rm -rf ~/powerline-fonts
-
-#################################################
 # iterm2
-# 1. Install
-brew cask install iterm2
-# 2. Theme
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/terminal.sh)"
 
 #################################################
+
+brew install thefuck
+echo "" >> ~/.zshrc
+echo "eval \"\$(thefuck --alias eep)\"" >> ~/.zshrc
+
 # Environment/Framework/Etc
-brew install node mongo robomongo
+brew install python3 python2 pwgen nvm mongo
+brew cask install robo-3t atom visual-studio-code
+
+mkdir ~/.nvm
+echo "" >> ~/.zshrc
+echo "export NVM_DIR=\"\$HOME/.nvm\"" >> ~/.zshrc
+echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc
+
+nvm install --latest-npm
+npm i -g eslint eslint-plugin-meteor npm-check
+
 curl https://install.meteor.com/ | sh
+
