@@ -1,8 +1,7 @@
-# Personalise Git
+# Run git setup
 
 ```
-git config --global user.name "your name"
-git config --global user.email "your@email.com"
+sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/setup.sh)"
 ```
 
 # Setup SSH
@@ -18,4 +17,3 @@ ssh-add ~/.ssh/id_rsa
 # Copy public key to clipboard so you can add it to github
 clip < ~/.ssh/id_rsa.pub
 ```
-
