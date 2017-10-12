@@ -15,5 +15,5 @@ eval $(ssh-agent -s)
 # Add key to agent
 ssh-add ~/.ssh/id_rsa
 # Copy public key to clipboard so you can add it to github
-clip < ~/.ssh/id_rsa.pub
+cat ~/.ssh/id_rsa.pub | pbcopy
 ```
