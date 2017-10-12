@@ -1,12 +1,12 @@
 # Run git setup
 
-```
+```sh
 sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/setup.sh)"
 ```
 
 # Setup SSH
 
-```
+```sh
 # Generate SSH key
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 # ... follow instructions ...
