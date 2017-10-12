@@ -31,6 +31,8 @@ mkdir ~/.nvm
 echo "" >> ~/.zshrc
 echo "export NVM_DIR=\"\$HOME/.nvm\"" >> ~/.zshrc
 echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc
+nvm install stable --latest-npm
+nvm alias default stable
 
 nvm install --latest-npm
 npm i -g eslint eslint-plugin-meteor npm-check
