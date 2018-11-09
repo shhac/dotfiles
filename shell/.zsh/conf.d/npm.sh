@@ -1,0 +1,1 @@
+alias nr="npm run"
