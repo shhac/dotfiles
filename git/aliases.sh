@@ -60,3 +60,6 @@ git config --global alias.history '!git reflog --pretty=raw | tig --pretty=raw'
 git config --global alias.bl '!tig blame --'
 git config --global alias.file '!tig --'
 
+# diff-so-fancy
+git config --global alias.dsf '!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy | less --tabs=4 -RFX; };'
+git config --global alias.compare 'dsf --no-index'
