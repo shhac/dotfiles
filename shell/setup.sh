@@ -1,6 +1,18 @@
 sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/zsh.sh)"
 sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/fonts.sh)"
 
+mkdir -p ~/.zsh/conf.d
+
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/conf.d/fns.sh > ~/.zsh/conf.d/fns.sh
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/conf.d/git.sh > ~/.zsh/conf.d/git.sh
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/conf.d/net.sh > ~/.zsh/conf.d/net.sh
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/conf.d/npm.sh > ~/.zsh/conf.d/npm.sh
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/conf.d/nvm.sh > ~/.zsh/conf.d/nvm.sh
+curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/conf.d/utl.sh > ~/.zsh/conf.d/utl.sh
+
 echo "" >> ~/.zshrc
-curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/aliases.sh >> ~/.zshrc
+cat <<EOF >> ~/.zshrc
+# Load in custom extensions
+source <(cat ~/.zsh/conf.d/*)
+EOF
 
