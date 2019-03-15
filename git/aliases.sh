@@ -27,6 +27,7 @@ git config --global alias.likenew '!git clean -fdx && git reset HEAD --'
 git config --global alias.forget 'checkout --'
 git config --global alias.radd '!git rm -r --cached . && git add .'
 git config --global alias.mm 'merge master'
+git config --global alias.empty '!git cat-file -e e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 || git hash-object -w --stdin < /dev/null; git update-index --add --cacheinfo 0644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391'
 
 # History rewriting
 git config --global alias.ri 'rebase -i'
