@@ -30,6 +30,17 @@ git config --global alias.radd '!git rm -r --cached . && git add .'
 git config --global alias.mm 'merge master'
 git config --global alias.empty '!git cat-file -e e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 || git hash-object -w --stdin < /dev/null; git update-index --add --cacheinfo 0644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391'
 
+# git switch
+git config --global alias.sw 'switch'
+git config --global alias.swc 'switch -c'
+git config --global alias.swm 'switch master'
+git config --global alias.swl 'switch -'
+# git switch + submodule updates
+git config --global alias.swz '!f(){ git switch "$@" && git submodule update --init --recursive; }; f'
+git config --global alias.swmz '!git switch master && git submodule update --init --recursive'
+git config --global alias.swlz '!git switch - && git submodule update --init --recursive'
+
+
 # History rewriting
 git config --global alias.ri 'rebase -i'
 git config --global alias.rim 'rebase -i master'
