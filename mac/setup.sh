@@ -24,18 +24,20 @@ echo "" >> ~/.zshrc
 echo "eval \"\$(thefuck --alias eep)\"" >> ~/.zshrc
 
 # Environment/Framework/Etc
-brew install python3 python2 pwgen nvm mongo
-brew cask install robo-3t atom visual-studio-code
+brew install python3 python2 pwgen
+brew cask install font-fira-code visual-studio-code
 
+# Install NVM
 mkdir ~/.nvm
-echo "" >> ~/.zshrc
-echo "export NVM_DIR=\"\$HOME/.nvm\"" >> ~/.zshrc
-echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+# echo "" >> ~/.zshrc
+# echo "export NVM_DIR=\"\$HOME/.nvm\"" >> ~/.zshrc
+# echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc
 nvm install stable --latest-npm
-nvm alias default stable
+nvm alias default 'lts/*'
 
 nvm install --latest-npm
-npm i -g eslint eslint-plugin-meteor npm-check
+npm i -g npm-check git-open serve
 
-curl https://install.meteor.com/ | sh
+# curl https://install.meteor.com/ | sh
 
