@@ -52,8 +52,8 @@ gm() {
     echo "- 💼 dep depend dependency" >&2
     echo "- 🚑 f fix" >&2
     echo "- 💄 i im improve ui" >&2
-    echo "- 🚨 l lint" >&2
-    echo "- 🚚 m move" >&2
+    echo "- 🚨 l li lint" >&2
+    echo "- 🚚 m mv move" >&2
     echo "- 🔥 r rm remove del delete" >&2
     echo "- ♻️ ref refactor" >&2
     echo "- ✅ t test" >&2
@@ -81,7 +81,7 @@ gm() {
       ;;
     "bump" )
       EMOJI="⬆️"
-      DESC="BUMP DEP:"
+      DESC="BUMP:"
       ;;
     "c"|"change"|"u"|"update" )
       EMOJI="️⚡️"
@@ -103,11 +103,11 @@ gm() {
       EMOJI="💄"
       DESC="IMPROVE:"
       ;;
-    "l"|"lint" )
+    "l"|"li"|"lint" )
       EMOJI="🚨"
       DESC="LINT:"
       ;;
-    "m"|"move" )
+    "m"|"mv"|"move" )
       EMOJI="🚚"
       DESC="MOVE:"
       ;;
