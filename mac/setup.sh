@@ -11,13 +11,15 @@ curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/osx-shell.sh >> ~/.z
 brew upgrade
 
 # git
-brew install git
+brew install git tig
 sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/setup.sh)"
 
 # iterm2
 sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/terminal.sh)"
 
 #################################################
+
+brew install rig tldr
 
 brew install thefuck
 echo "" >> ~/.zshrc
