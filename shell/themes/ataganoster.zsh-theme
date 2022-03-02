@@ -82,13 +82,23 @@ rprompt_time() {
 }
 
 rprompt_rig() {
-  local na
+  local nom
   nom="$(rig -c 1 | head -1)"
   rprompt_segment 237 200 "$nom"
 }
 
+rprompt_node() {
+  local nv icon
+  if [ -x "$(command -v node)" ]; then
+    nv="$(node --version | sed -E 's/^v([0-9]+\.[0-9]+).*$/\1/')"
+    icon=$'\u2B22'
+    rprompt_segment 170 237 "$nv $icon"
+  fi
+}
+
 build_rprompt() {
   rprompt_rig
+  rprompt_node
   rprompt_time
   rprompt_end
 }
