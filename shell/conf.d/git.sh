@@ -11,7 +11,7 @@ git-is-git() {
 }
 
 git-branch-to-ticket() {
-  echo "$1" | sed -E 's/^(refs\/heads\/)?([A-Z][A-Z]-[0-9]+)-.*$|^.*$/\2/'
+  echo "$1" | sed -E 's/^(refs\/heads\/)?([A-Z]{2,}-[0-9]+)-.*$|^.*$/\2/'
 }
 
 git-ticket() {
@@ -41,6 +41,7 @@ git-ticket() {
 
 alias t="git-ticket"
 
+unalias gm
 gm() {
   if [ -z "$1" ]; then
     echo "Commit with style:" >&2
@@ -61,15 +62,17 @@ gm() {
     return
   fi
 
-  local TICKET="$(t)"
-  if [[ "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
-    TICKET="$TICKET"
-  else
-    TICKET=""
-  fi
+  local TICKET=""
+  # local TICKET="$(t)"
+  # if [[ "$TICKET" =~ ^[A-Z]+-[0-9]+$ ]]; then
+  #   TICKET="$TICKET"
+  # else
+  #   TICKET=""
+  # fi
 
   local EMOJI=""
   local DESC=""
+  local FLAGS=""
   case "$1" in
     "a"|"add"|"feature" )
       EMOJI="🎉"
@@ -126,12 +129,16 @@ gm() {
     "w"|"wip" )
       EMOJI="🚧"
       DESC="WIP:"
+      FLAGS="--no-verify"
       ;;
   esac
 
   local MSG=""
   for word in "${@:2}"; do
-    MSG="${MSG}${word} "
+    case $word in
+      "--"*) if [ -z "$FLAGS"]; then; FLAGS="$word"; else; FLAGS="$FLAGS $word"; fi;;
+      *) MSG="${MSG}${word} ";
+    esac
   done
   MSG="${MSG%?}"
 
@@ -153,7 +160,8 @@ gm() {
     MSG="${TICKET} ${MSG}"
   fi
 
-  git commit -m "$MSG"
+  echo git commit $FLAGS -m "$MSG"
+  git commit $FLAGS -m "$MSG"
 }
 
 ct() {
