@@ -49,7 +49,7 @@ git config --global alias.ria '!git rebase -i `git merge-base HEAD master`'
 git config --global alias.rih '!f(){ git rebase -i "HEAD~$@"; }; f'
 git config --global alias.commend 'commit --amend --no-edit'
 git config --global alias.please 'push --force-with-lease'
-git config --global alias.fix '!f(){ git commit --fixup "${1}"; git rebase -i "${1}~1" --autosquash --autostash; }; f'
+git config --global alias.fix '!f(){ git commit --fixup "${1}" ${@:2}; git rebase -i "${1}~1" --autosquash --autostash; }; f'
 
 # New Repos
 git config --global alias.it '!f(){ git init; git commit -m "${1-Initial Commit}" --allow-empty; }; f'
