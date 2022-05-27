@@ -72,7 +72,7 @@ gm() {
 
   local EMOJI=""
   local DESC=""
-  local FLAGS=""
+  local FLAGS=()
   case "$1" in
     "a"|"add"|"feature" )
       EMOJI="🎉"
@@ -129,15 +129,15 @@ gm() {
     "w"|"wip" )
       EMOJI="🚧"
       DESC="WIP:"
-      FLAGS="--no-verify"
+      FLAGS+=("--no-verify")
       ;;
   esac
 
   local MSG=""
   for word in "${@:2}"; do
     case $word in
-      "--"*) if [ -z "$FLAGS"]; then; FLAGS="$word"; else; FLAGS="$FLAGS $word"; fi;;
-      *) MSG="${MSG}${word} ";
+      "--"*) FLAGS+=("$word");;
+      *) MSG="${MSG}${word} ";;
     esac
   done
   MSG="${MSG%?}"
