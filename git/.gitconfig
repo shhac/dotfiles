@@ -1,0 +1,76 @@
+[alias]
+	f = fetch
+	a = add
+	ai = add --patch
+	last = log -1 --stat
+	cp = cherry-pick
+	st = status -sb
+	co = checkout
+	cob = checkout -b
+	col = checkout @{-1}
+	com = checkout master
+	cl = clone
+	ci = commit
+	cim = commit -m
+	br = branch
+	brr = branch -r
+	brc = rev-parse --abbrev-ref HEAD
+	unstage = restore --staged
+	boom = reset --hard HEAD
+	dc = diff --cached
+	df = !git --no-pager diff --stat
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative
+	lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative --all
+	pl = pull
+	ps = push
+	uncommit = reset --soft HEAD^
+	likenew = !git clean -fdx && git reset HEAD --
+	forget = checkout --
+	radd = !git rm -r --cached . && git add .
+	mm = merge master
+	empty = "!git cat-file -e e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 || git hash-object -w --stdin < /dev/null; git update-index --add --cacheinfo 0644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+	sw = switch
+	swc = switch -c
+	swm = switch master
+	swl = switch -
+	swz = "!f(){ git switch \"$@\" && git submodule update --init --recursive; }; f"
+	swmz = !git switch master && git submodule update --init --recursive
+	swlz = !git switch - && git submodule update --init --recursive
+	ri = rebase -i
+	rim = rebase -i master
+	ric = rebase --continue
+	ria = !git rebase -i `git merge-base HEAD master`
+	rih = "!f(){ git rebase -i \"HEAD~$@\"; }; f"
+	commend = commit --amend --no-edit
+	please = push --force-with-lease
+	fix = "!f(){ git commit --fixup \"${1}\" ${@:2}; git rebase -i \"${1}~1\" --autosquash --autostash; }; f"
+	it = "!f(){ git init; git commit -m \"${1-Initial Commit}\" --allow-empty; }; f"
+	br-merged = "!f(){ git branch --merged ${1-master} | cut -c 3- | grep -v ${1-master}; }; f"
+	brr-merged = "!f(){ git branch -r --merged ${2-origin}/${1-master} | grep ${2-origin}/ | cut -c 3- | sed -e \"s/^${2-origin}\\/HEAD \\-\\> //\" | grep -v ${2-origin}/${1-master} | cut -c $(echo \"${2-origin}/.\" | awk '{print length}')-; }; f"
+	sup = submodule update --init --recursive
+	coz = "!f(){ git checkout \"$@\" && git submodule update --init --recursive; }; f"
+	colz = !git checkout @{-1} && git submodule update --init --recursive
+	comz = !git checkout master && git submodule update --init --recursive
+	plz = !git pull && git submodule update --init --recursive
+	clz = clone --recursive
+	suff = "!f(){ echo \"Submodule Target Branch: ${1-master}\"; git submodule update --init --recursive && echo \"\\n\" && git submodule foreach \"git checkout ${1-master} && git pull --ff-only && git submodule update --init --recursive; echo \"\";\"; }; f"
+	sucoz = "!f() { git submodule foreach \"rm -r ./*\"; git checkout ${1-master}; git submodule update --init --recursive; git submodule foreach \"git reset --hard HEAD\"; }; f"
+	sufe = submodule foreach
+	history = !git reflog --pretty=raw | tig --pretty=raw
+	bl = !tig blame --
+	file = !tig --
+	dsf = "!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy | less --tabs=4 -RFX; }; f"
+	compare = dsf --no-index
+	dsfc = dsf --cached
+	scop = "!f(){ git stash push && git checkout ${@} && git stash pop; }; f"
+[push]
+	default = simple
+[pull]
+	ff = only
+	name = PLACEHOLDER
+	email = PLACEHOLDER
+	signingkey = PLACEHOLDER
+[diff]
+	mnemonicprefix = true
+[commit]
+	gpgSign = true
