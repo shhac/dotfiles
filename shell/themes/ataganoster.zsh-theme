@@ -97,7 +97,7 @@ rprompt_node() {
 }
 
 build_rprompt() {
-  rprompt_rig
+  # rprompt_rig
   rprompt_node
   rprompt_time
   rprompt_end
