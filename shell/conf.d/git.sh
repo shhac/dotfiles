@@ -137,6 +137,7 @@ gm() {
   for word in "${@:2}"; do
     case $word in
       "--"*) FLAGS+=("$word");;
+      "-"*) FLAGS+=("$word");;
       *) MSG="${MSG}${word} ";;
     esac
   done
@@ -148,10 +149,12 @@ gm() {
     MSG="${DESC} ${MSG}"
   fi
 
-  if [ -z "$MSG" ]; then
-    MSG="${EMOJI}"
-  elif [ ! -z "${EMOJI}" ]; then
-    MSG="${EMOJI} ${MSG}"
+  if [[ "$(pwd)" != *"projects/web"* ]]; then
+    if [ -z "$MSG" ]; then
+      MSG="${EMOJI}"
+    elif [ ! -z "${EMOJI}" ]; then
+      MSG="${EMOJI} ${MSG}"
+    fi
   fi
 
   if [ -z "$MSG" ]; then
