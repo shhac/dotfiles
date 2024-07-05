@@ -1,9 +1,9 @@
 # OSX Defaults
 # Show all files and extensions, in list mode
-defaults write com.apple.Finder AppleShowAllFiles YES
-defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
-defaults write com.apple.Finder FXPreferredViewStyle Nlsv
-sudo find / -name '.DS_Store' -exec rm {} \;
+sudo defaults write com.apple.Finder AppleShowAllFiles YES
+sudo defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
+sudo defaults write com.apple.Finder FXPreferredViewStyle Nlsv
+# sudo find / -name '.DS_Store' -exec rm {} \;
 chflags nohidden ~/Library
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
