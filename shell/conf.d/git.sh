@@ -46,22 +46,21 @@ gm-help() {
   local HELP=0
   if [ -z "$1" ]; then
     HELP=1
-    return
   fi
   for word in "$@"; do
     case $word in
-      "--help" | "-h" )
-        HELP=1
-      ;;
+      "--help" | "-h" ) HELP=1 ;;
     esac
   done
-  if [ ! "$HELP" = "1" ]; then
+  if [ $HELP -eq 0 ]; then
     return 0
   fi
-  echo "Commit with style" >&2
+  echo "Commit with style - Usage:" >&2
   echo "" >&2
   echo "   gm <type> <scope> <message>" >&2
-  echo "   # type(scope): message" >&2
+  echo "   # git commit -m "'"'"type(scope): message"'"' >&2
+  echo "   gm --help" >&2
+  echo "   # Show this help" >&2
   echo "" >&2
   echo "Type:  e.g. feat" >&2
   echo " - b fix (alias)" >&2
@@ -150,7 +149,9 @@ gm() {
   if [ ! -z "$SCOPE" ]; then
     COMMIT_MSG="$COMMIT_MSG($SCOPE)"
   fi
-  COMMIT_MSG="$COMMIT_MSG: $MESSAGE"
+  if [ ! -z "$MESSAGE" ]; then
+    COMMIT_MSG="$COMMIT_MSG: $MESSAGE"
+  fi
   if [ "$DEBUG" = "1" ]; then
     echo "$ git commit $FLAGS -m "'"'"$COMMIT_MSG"'"' >&2
     return 2
