@@ -43,11 +43,13 @@ alias t="git-ticket"
 
 unalias gm
 gm-help() {
-  echo "Commit with style:" >&2
-  echo "   $ type scope message" >&2
+  echo "Commit with style" >&2
+  echo "" >&2
+  echo "   gm <type> <scope> <message>" >&2
+  echo "   # type(scope): message" >&2
   echo "" >&2
   echo "Type:  e.g. feat" >&2
-  echo "   b fix (alias)" >&2
+  echo " - b fix (alias)" >&2
   echo " - c chore" >&2
   echo " - d doc" >&2
   echo " - f fix" >&2
@@ -57,7 +59,7 @@ gm-help() {
   echo " - w wip" >&2
   echo "" >&2
   echo "Scope:  e.g. packages" >&2
-  echo " - Use hyphen - for explicit" >&2
+  echo " - Use hyphen (-) for an explicit non-scoped commit" >&2
   echo "Message:  e.g. add new event types" >&2
 }
 gm-validate-type() {
