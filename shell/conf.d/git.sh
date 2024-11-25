@@ -63,12 +63,18 @@ gm-help() {
   echo "   # Show this help" >&2
   echo "" >&2
   echo "Type:  e.g. feat" >&2
-  echo " - b fix (alias)" >&2
+  echo " - b bug (alias for fix)" >&2
+  echo " - build" >&2
   echo " - c chore" >&2
-  echo " - d doc" >&2
+  echo " - ci" >&2
+  echo " - d doc docs" >&2
   echo " - f fix" >&2
-  echo " - ft feat (feature)" >&2
+  echo " - ft feat feature" >&2
   echo " - hf hotfix" >&2
+  echo " - p perf performance" >&2
+  echo " - r ref refactor" >&2
+  echo " - rev revert" >&2
+  echo " - s style" >&2
   echo " - t test" >&2
   echo " - w wip" >&2
   echo "" >&2
@@ -79,11 +85,17 @@ gm-help() {
 }
 gm-validate-type() {
   case "$1" in
+    "build" ) return 0 ;;
     "chore" ) return 0 ;;
-    "doc" ) return 0 ;;
+    "ci" ) return 0 ;;
+    "docs" ) return 0 ;;
     "fix" ) return 0 ;;
     "feat" ) return 0 ;;
     "hotfix" ) return 0 ;;
+    "perf" ) return 0 ;;
+    "refactor" ) return 0 ;;
+    "revert" ) return 0 ;;
+    "style" ) return 0 ;;
     "test" ) return 0 ;;
     "wip" ) return 0 ;;
     * )
@@ -122,12 +134,16 @@ gm() {
   local MESSAGE=()
   local FLAGS=()
   case "$TYPE" in
-    "b" ) TYPE="fix" ;;
+    "b" | "bug" ) TYPE="fix" ;;
     "c" ) TYPE="chore" ;;
-    "d" ) TYPE="doc" ;;
+    "d" | "doc" ) TYPE="docs" ;;
     "f" ) TYPE="fix" ;;
-    "ft" ) TYPE="feat" ;;
+    "ft" | "feature" ) TYPE="feat" ;;
     "hf" ) TYPE="hotfix" ;;
+    "p" | "performance" ) TYPE="perf" ;;
+    "r" | "ref" ) TYPE="refactor" ;;
+    "rev" ) TYPE="revert" ;;
+    "s" ) TYPE="style" ;;
     "t" ) TYPE="test" ;;
     "w" ) TYPE="wip" ;;
   esac
