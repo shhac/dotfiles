@@ -43,6 +43,21 @@ alias t="git-ticket"
 
 unalias gm
 gm-help() {
+  local HELP=0
+  if [ -z "$1" ]; then
+    HELP=1
+    return
+  fi
+  for word in "$@"; do
+    case $word in
+      "--help" | "-h" )
+        HELP=1
+      ;;
+    esac
+  done
+  if [ ! "$HELP" = "1" ]; then
+    return 0
+  fi
   echo "Commit with style" >&2
   echo "" >&2
   echo "   gm <type> <scope> <message>" >&2
@@ -61,6 +76,7 @@ gm-help() {
   echo "Scope:  e.g. packages" >&2
   echo " - Use hyphen (-) for an explicit non-scoped commit" >&2
   echo "Message:  e.g. add new event types" >&2
+  return 1
 }
 gm-validate-type() {
   case "$1" in
@@ -101,10 +117,7 @@ gm-validate-message() {
   return 0
 }
 gm() {
-  if [ -z "$1" ]; then
-    gm-help
-    return
-  fi
+  gm-help "$@" || return $?
   local TYPE="${@:1:1}"
   local SCOPE="${@:2:1}"
   local MESSAGE=()
@@ -126,7 +139,7 @@ gm() {
     case $word in
       "--" | "-" ) MESSAGE+=("$word") ;;
       "--"* | "-"* ) FLAGS+=("$word") ;;
-      * ) MESSAGE+=("${word}") ;;
+      * ) MESSAGE+=("$word") ;;
     esac
   done
   MESSAGE="${MESSAGE[*]}"
