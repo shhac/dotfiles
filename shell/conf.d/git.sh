@@ -42,7 +42,108 @@ git-ticket() {
 alias t="git-ticket"
 
 unalias gm
+gm-help() {
+  echo "Commit with style:" >&2
+  echo "   $ type scope message" >&2
+  echo "" >&2
+  echo "Type:  e.g. feat" >&2
+  echo "   b fix (alias)" >&2
+  echo " - c chore" >&2
+  echo " - d doc" >&2
+  echo " - f fix" >&2
+  echo " - ft feat (feature)" >&2
+  echo " - hf hotfix" >&2
+  echo " - t test" >&2
+  echo " - w wip" >&2
+  echo "" >&2
+  echo "Scope:  e.g. packages" >&2
+  echo " - Use hyphen - for explicit" >&2
+  echo "Message:  e.g. add new event types" >&2
+}
+gm-validate-type() {
+  case "$1" in
+    "chore" ) return 0 ;;
+    "doc" ) return 0 ;;
+    "fix" ) return 0 ;;
+    "feat" ) return 0 ;;
+    "hotfix" ) return 0 ;;
+    "test" ) return 0 ;;
+    "wip" ) return 0 ;;
+    * )
+      echo "Invalid type: $1" >&2
+      return 1
+    ;;
+  esac
+}
+gm-validate-scope() {
+  if [ "$1" = "wip" ]; then
+    return 0
+  fi
+  if [ ! -z "$3" ]; then
+    return 0
+  fi
+  if [ -z "$2" ]; then
+    echo "Invalid empty commit scope" >&2
+    return 1
+  fi
+  return 0
+}
+gm-validate-message() {
+  if [ "$1" = "wip" ]; then
+    return 0
+  fi
+  if [ -z "$3" ]; then
+    echo "Invalid empty commit message" >&2
+    return 1
+  fi
+  return 0
+}
 gm() {
+  if [ -z "$1" ]; then
+    gm-help
+    return
+  fi
+  local TYPE="${@:1:1}"
+  local SCOPE="${@:2:1}"
+  local MESSAGE=()
+  local FLAGS=()
+  case "$TYPE" in
+    "b" ) TYPE="fix" ;;
+    "c" ) TYPE="chore" ;;
+    "d" ) TYPE="doc" ;;
+    "f" ) TYPE="fix" ;;
+    "ft" ) TYPE="feat" ;;
+    "hf" ) TYPE="hotfix" ;;
+    "t" ) TYPE="test" ;;
+    "w" ) TYPE="wip" ;;
+  esac
+  case "$SCOPE" in
+    "-" ) SCOPE="" ;;
+  esac
+  for word in "${@:3}"; do
+    case $word in
+      "--" | "-" ) MESSAGE+=("$word") ;;
+      "--"* | "-"* ) FLAGS+=("$word") ;;
+      * ) MESSAGE+=("${word}") ;;
+    esac
+  done
+  MESSAGE="${MESSAGE[*]}"
+  gm-validate-type "$TYPE" "$SCOPE" "$MESSAGE" || return $?
+  gm-validate-scope "$TYPE" "$SCOPE" "$MESSAGE" || return $?
+  gm-validate-message "$TYPE" "$SCOPE" "$MESSAGE" || return $?
+  local COMMIT_MSG="$TYPE"
+  if [ ! -z "$SCOPE" ]; then
+    COMMIT_MSG="$COMMIT_MSG($SCOPE)"
+  fi
+  COMMIT_MSG="$COMMIT_MSG: $MESSAGE"
+  if [ "$DEBUG" = "1" ]; then
+    echo "$ git commit $FLAGS -m "'"'"$COMMIT_MSG"'"' >&2
+    return 2
+  fi
+  git commit $FLAGS -m "$COMMIT_MSG"
+}
+
+gm-old() {
   if [ -z "$1" ]; then
     echo "Commit with style:" >&2
     echo "- 🎉 a add feature" >&2
