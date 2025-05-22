@@ -163,7 +163,7 @@ gm() {
   gm-validate-message "$TYPE" "$SCOPE" "$MESSAGE" || return $?
   local COMMIT_MSG="$TYPE"
   if [ ! -z "$SCOPE" ]; then
-    COMMIT_MSG="$COMMIT_MSG($SCOPE)"
+    COMMIT_MSG="$COMMIT_MSG""[""$SCOPE""]"
   fi
   if [ ! -z "$MESSAGE" ]; then
     COMMIT_MSG="$COMMIT_MSG: $MESSAGE"
