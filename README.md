@@ -1,6 +1,6 @@
 # Dotfiles
 
-Personal dotfiles for macOS development environment setup with git, shell, and vim configurations.
+Personal dotfiles for cross-platform development environment setup with git, shell, and vim configurations.
 
 ## Quick Start
 
@@ -25,19 +25,37 @@ chmod +x setup.sh */setup.sh
 sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/setup.sh)"
 ```
 
+## Supported Platforms
+
+### macOS
+Complete development environment with Homebrew, modern CLI tools, and system preferences.
+
+### WSL2 (Windows Subsystem for Linux)
+Modern Windows development using Ubuntu on WSL2 with Docker, modern CLI tools, and Windows interoperability.
+
+### Cygwin (Legacy)
+Basic setup for legacy Windows environments. **Deprecated - use WSL2 instead.**
+
 ## What Gets Configured
 
 - **Git**: Aliases, user settings, push/pull configuration, diff tools
 - **Shell**: Oh My Zsh with custom theme, plugins, and configuration files
 - **Vim**: Basic vim configuration with syntax highlighting and sensible defaults
-- **macOS**: System preferences, Homebrew packages, development tools
+- **Platform-specific**: System preferences, package management, development tools
 
-### Tools Installed (macOS)
+### Tools Installed
 
+#### macOS
 - **Development**: git, tig, diff-so-fancy, doppler, graphite
-- **Utilities**: thefuck, tldr, pwgen
+- **Utilities**: thefuck, tealdeer, pwgen
 - **GUI Apps**: Visual Studio Code, iTerm2, Fira Code font
 - **Node.js**: via NVM with latest LTS
+
+#### WSL2
+- **Development**: git, docker, node.js, python3
+- **Modern CLI**: exa, bat, fd, ripgrep, delta
+- **Integration**: Windows interoperability, X11 forwarding
+- **Package Management**: apt packages, Docker containers
 
 ## Individual Component Setup
 
@@ -58,6 +76,9 @@ chmod +x git/setup.sh shell/setup.sh vim/setup.sh mac/setup.sh
 
 # macOS full setup (includes all components)
 ./mac/setup.sh
+
+# WSL2 full setup (includes all components)
+./wsl2/setup.sh
 ```
 
 ## Key Features
@@ -99,15 +120,30 @@ dotfiles/
 │   ├── setup.sh
 │   ├── osx-config.sh      # System preferences
 │   └── iterm2-profiles/   # Terminal configurations
+├── wsl2/                  # WSL2-specific setup
+│   ├── setup.sh
+│   ├── wsl-interop.sh     # Windows interoperability
+│   ├── x11-setup.sh       # GUI application support
+│   ├── wsl2-aliases.sh    # WSL2-specific aliases
+│   └── README.md          # WSL2 documentation
 └── CLAUDE.md             # Claude Code guidance
 ```
 
 ## Requirements
 
+### macOS
 - **macOS**: 10.15+ (for macOS setup)
 - **Git**: For cloning and git configuration
 - **curl**: For downloading dependencies
-- **Internet connection**: For initial tool downloads
+
+### WSL2
+- **Windows**: 10 version 2004+ or Windows 11
+- **WSL2**: Enabled with Ubuntu distribution
+- **Internet connection**: For package downloads
+
+### All Platforms
+- **Git**: For cloning repository
+- **curl**: For downloading dependencies
 
 ## Troubleshooting
 

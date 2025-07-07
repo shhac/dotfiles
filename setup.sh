@@ -46,7 +46,12 @@ OS_TYPE=""
 if [[ "$OSTYPE" == "darwin"* ]]; then
     OS_TYPE="macOS"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    OS_TYPE="Linux"
+    # Check if we're in WSL2
+    if [ -f /proc/version ] && grep -q Microsoft /proc/version; then
+        OS_TYPE="WSL2"
+    else
+        OS_TYPE="Linux"
+    fi
 elif [[ "$OSTYPE" == "cygwin" ]]; then
     OS_TYPE="Cygwin"
 else
@@ -99,8 +104,18 @@ if [[ "$OS_TYPE" == "macOS" ]]; then
     else
         warning "macOS setup script not found, skipping"
     fi
+elif [[ "$OS_TYPE" == "WSL2" ]]; then
+    echo "🐧 Setting up WSL2 Ubuntu configuration..."
+    if [ -f "$DOTFILES_DIR/wsl2/setup.sh" ]; then
+        chmod +x "$DOTFILES_DIR/wsl2/setup.sh"
+        source "$DOTFILES_DIR/wsl2/setup.sh" || error_exit "WSL2 setup failed"
+        success "WSL2 configuration complete"
+    else
+        warning "WSL2 setup script not found, skipping"
+    fi
 elif [[ "$OS_TYPE" == "Cygwin" ]]; then
     echo "🖥️ Setting up Cygwin configuration..."
+    warning "Cygwin setup is deprecated. Consider using WSL2 instead."
     if [ -f "$DOTFILES_DIR/cygwin/setup.sh" ]; then
         chmod +x "$DOTFILES_DIR/cygwin/setup.sh"
         source "$DOTFILES_DIR/cygwin/setup.sh" || error_exit "Cygwin setup failed"
@@ -121,6 +136,11 @@ echo "  • Vim configuration"
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  • macOS system preferences"
     echo "  • Homebrew packages"
+elif [[ "$OS_TYPE" == "WSL2" ]]; then
+    echo "  • WSL2 Ubuntu packages and tools"
+    echo "  • Docker and modern CLI tools"
+    echo "  • Windows interoperability"
+    echo "  • X11 forwarding for GUI apps"
 fi
 echo ""
 echo "🔄 Next steps:"
@@ -128,6 +148,10 @@ echo "  1. Restart your terminal or run 'source ~/.zshrc'"
 echo "  2. Review git configuration with 'git config --global --list'"
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  3. Import iTerm2 color scheme from mac/iterm2-profiles/Default.json"
+elif [[ "$OS_TYPE" == "WSL2" ]]; then
+    echo "  3. Install Windows Terminal for better terminal experience"
+    echo "  4. Install VcXsrv or X410 for GUI apps (or use WSLg on Windows 11)"
+    echo "  5. Test Docker: 'docker run hello-world'"
 fi
 echo ""
 echo "📖 For individual component setup, run:"
@@ -136,4 +160,6 @@ echo "  • ./shell/setup.sh  - Shell configuration only"
 echo "  • ./vim/setup.sh    - Vim configuration only"
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  • ./mac/setup.sh    - macOS full setup"
+elif [[ "$OS_TYPE" == "WSL2" ]]; then
+    echo "  • ./wsl2/setup.sh   - WSL2 full setup"
 fi
