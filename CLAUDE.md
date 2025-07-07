@@ -34,10 +34,13 @@ cd ~/.dotfiles
 # Make scripts executable  
 chmod +x setup.sh */setup.sh
 
-# Full setup (detects platform automatically)
+# Interactive setup (recommended - prompts for each component)
 ./setup.sh
 
-# Individual components
+# Non-interactive setup (auto-yes to all prompts)
+./setup.sh --yes
+
+# Individual components (also interactive)
 ./mac/setup.sh      # macOS setup
 ./shell/setup.sh    # Shell configuration  
 ./git/setup.sh      # Git configuration
@@ -64,6 +67,8 @@ gm chore deps "update package versions"  # chore[deps]: update package versions
 ## Architecture Notes
 
 - **Modular design** - Each platform/tool has its own directory with setup scripts
+- **Interactive prompts** - All scripts support user-friendly prompts with graceful skipping
+- **Shared utilities** - Common functions in `lib/utils.sh` for consistent experience
 - **Local installation** - Setup scripts use local configuration files for reliable, offline-capable setup
 - **Shell integration** - All custom functions/aliases loaded via `shell/conf.d/` directory
 - **Git-centric workflow** - Extensive git aliases and utilities for branch/commit management

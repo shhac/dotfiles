@@ -4,7 +4,7 @@ Personal dotfiles for cross-platform development environment setup with git, she
 
 ## Quick Start
 
-### Local Setup (Recommended)
+### Interactive Setup (Recommended)
 
 ```bash
 # Clone the repository
@@ -14,9 +14,18 @@ cd ~/.dotfiles
 # Make setup scripts executable
 chmod +x setup.sh */setup.sh
 
-# Run complete setup
+# Run interactive setup (prompts for each component)
 ./setup.sh
+
+# Or run non-interactively (auto-yes to all prompts)
+./setup.sh --yes
 ```
+
+### Command Line Options
+
+- **Interactive mode** (default): Prompts for each component, allows skipping
+- **Non-interactive mode**: `./setup.sh --yes` or `./setup.sh --non-interactive`
+- **Help**: `./setup.sh --help` for usage information
 
 
 ## Supported Platforms
@@ -86,9 +95,16 @@ chmod +x git/setup.sh shell/setup.sh vim/setup.sh mac/setup.sh
 
 ## Key Features
 
+### Interactive Setup
+- **User-friendly prompts**: Choose which components to install
+- **Graceful skipping**: Skip any component you don't need
+- **Non-interactive mode**: Perfect for automation and CI/CD
+- **Shared utilities**: Consistent experience across all setup scripts
+
 ### Git Configuration
 - **Conventional commits**: Use `gm feat api "add new endpoint"` for `feat[api]: add new endpoint`
 - **Extensive aliases**: `git sw` (switch), `git lg` (pretty log), `git please` (force push with lease)
+- **Branch cleanup**: `git merged-remote-view/clean`, `git deleted-remote-view/clean`
 - **Modern workflow**: Configured for current Git best practices
 
 ### Shell Configuration
@@ -123,6 +139,8 @@ dotfiles/
 │   ├── setup.sh
 │   ├── osx-config.sh      # System preferences
 │   └── iterm2-profiles/   # Terminal configurations
+├── lib/                   # Shared utilities
+│   └── utils.sh           # Common functions and prompts
 ├── linux/                 # Linux setup (shared base)
 │   ├── setup.sh
 │   └── linux-aliases.sh   # Linux-specific aliases
