@@ -111,6 +111,15 @@ elif [[ "$OS_TYPE" == "WSL2" ]]; then
     else
         warning "WSL2 setup script not found, skipping"
     fi
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "🐧 Setting up Linux configuration..."
+    if [ -f "$DOTFILES_DIR/linux/setup.sh" ]; then
+        chmod +x "$DOTFILES_DIR/linux/setup.sh"
+        source "$DOTFILES_DIR/linux/setup.sh" || error_exit "Linux setup failed"
+        success "Linux configuration complete"
+    else
+        warning "Linux setup script not found, skipping"
+    fi
 fi
 
 echo ""
@@ -129,6 +138,10 @@ elif [[ "$OS_TYPE" == "WSL2" ]]; then
     echo "  • Docker and modern CLI tools"
     echo "  • Windows interoperability"
     echo "  • X11 forwarding for GUI apps"
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "  • Linux development packages"
+    echo "  • Modern CLI tools"
+    echo "  • Node.js and Python environments"
 fi
 echo ""
 echo "🔄 Next steps:"
@@ -140,6 +153,9 @@ elif [[ "$OS_TYPE" == "WSL2" ]]; then
     echo "  3. Install Windows Terminal for better terminal experience"
     echo "  4. Install VcXsrv or X410 for GUI apps (or use WSLg on Windows 11)"
     echo "  5. Test Docker: 'docker run hello-world'"
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "  3. Install additional development tools as needed"
+    echo "  4. Set up Docker if containerized development is required"
 fi
 echo ""
 echo "📖 For individual component setup, run:"
@@ -150,4 +166,6 @@ if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  • ./mac/setup.sh    - macOS full setup"
 elif [[ "$OS_TYPE" == "WSL2" ]]; then
     echo "  • ./wsl2/setup.sh   - WSL2 full setup"
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "  • ./linux/setup.sh  - Linux full setup"
 fi

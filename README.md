@@ -31,7 +31,10 @@ sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/setup.sh)"
 Complete development environment with Homebrew, modern CLI tools, and system preferences.
 
 ### WSL2 (Windows Subsystem for Linux)
-Modern Windows development using Ubuntu on WSL2 with Docker, modern CLI tools, and Windows interoperability.
+Modern Windows development using Ubuntu on WSL2 with Docker, modern CLI tools, and Windows interoperability. Builds on the shared Linux setup.
+
+### Linux
+Standard Linux distribution support with essential development tools and modern CLI utilities.
 
 ## What Gets Configured
 
@@ -49,10 +52,16 @@ Modern Windows development using Ubuntu on WSL2 with Docker, modern CLI tools, a
 - **Node.js**: via NVM with latest LTS
 
 #### WSL2
-- **Development**: git, docker, node.js, python3
-- **Modern CLI**: exa, bat, fd, ripgrep, delta
-- **Integration**: Windows interoperability, X11 forwarding
-- **Package Management**: apt packages, Docker containers
+- **Base**: All Linux setup features
+- **Additional**: Docker, git-delta, Windows interoperability
+- **Integration**: X11 forwarding, Windows PATH selective integration
+- **Containers**: Docker and Docker Compose setup
+
+#### Linux
+- **Development**: git, gcc/build tools, node.js, python3
+- **Modern CLI**: exa, bat, fd, ripgrep (where available)
+- **Package Management**: Multi-distro support (apt, yum, dnf, pacman)
+- **Utilities**: Modern aliases and development shortcuts
 
 ## Individual Component Setup
 
@@ -76,6 +85,9 @@ chmod +x git/setup.sh shell/setup.sh vim/setup.sh mac/setup.sh
 
 # WSL2 full setup (includes all components)
 ./wsl2/setup.sh
+
+# Linux full setup (includes all components)
+./linux/setup.sh
 ```
 
 ## Key Features
@@ -117,6 +129,9 @@ dotfiles/
 │   ├── setup.sh
 │   ├── osx-config.sh      # System preferences
 │   └── iterm2-profiles/   # Terminal configurations
+├── linux/                 # Linux setup (shared base)
+│   ├── setup.sh
+│   └── linux-aliases.sh   # Linux-specific aliases
 ├── wsl2/                  # WSL2-specific setup
 │   ├── setup.sh
 │   ├── wsl-interop.sh     # Windows interoperability
@@ -136,6 +151,11 @@ dotfiles/
 ### WSL2
 - **Windows**: 10 version 2004+ or Windows 11
 - **WSL2**: Enabled with Ubuntu distribution
+- **Internet connection**: For package downloads
+
+### Linux
+- **Distribution**: Ubuntu/Debian, RHEL/CentOS/Fedora, or Arch Linux
+- **Package manager**: apt, yum, dnf, or pacman
 - **Internet connection**: For package downloads
 
 ### All Platforms

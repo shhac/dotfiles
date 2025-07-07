@@ -1,6 +1,6 @@
 # WSL2 Ubuntu Setup
 
-Modern Windows development environment using Windows Subsystem for Linux 2 (WSL2) with Ubuntu.
+Modern Windows development environment using Windows Subsystem for Linux 2 (WSL2) with Ubuntu. This setup builds on the shared Linux setup and adds WSL2-specific features.
 
 ## Prerequisites
 
@@ -47,20 +47,17 @@ chmod +x setup.sh */setup.sh
 
 ## What Gets Installed
 
-### System Packages
+### Base Linux Setup
 - Essential build tools (gcc, make, etc.)
 - Git, vim, curl, wget, unzip
 - Zsh and Oh My Zsh
 - Node.js LTS
 - Python 3 and pip
-- Docker and Docker Compose
+- Modern CLI Tools (exa, bat, fd, ripgrep)
 
-### Modern CLI Tools
-- **exa** - Better `ls` with colors and icons
-- **bat** - Better `cat` with syntax highlighting
-- **fd** - Better `find` command
-- **ripgrep** - Better `grep` command
-- **delta** - Better `git diff` with syntax highlighting
+### WSL2-Specific Additions
+- **Docker** and Docker Compose
+- **git-delta** - Better `git diff` with syntax highlighting
 
 ### Development Environment
 - Oh My Zsh with custom theme and plugins
@@ -161,9 +158,13 @@ wsl --unregister Ubuntu
 
 ```
 wsl2/
-├── setup.sh              # Main WSL2 setup script
+├── setup.sh              # Main WSL2 setup script (calls ../linux/setup.sh)
 ├── wsl-interop.sh         # Windows interoperability
 ├── x11-setup.sh           # GUI application support
 ├── wsl2-aliases.sh        # WSL2-specific aliases
 └── README.md             # This file
+
+../linux/
+├── setup.sh              # Shared Linux base setup
+└── linux-aliases.sh      # Linux-specific aliases
 ```
