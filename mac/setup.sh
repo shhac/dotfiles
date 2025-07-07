@@ -21,6 +21,9 @@ sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/terminal.sh
 
 brew install rig tldr
 
+# Modern development tools
+brew install doppler graphite
+
 brew install thefuck
 echo "" >> ~/.zshrc
 echo "eval \"\$(thefuck --alias eep)\"" >> ~/.zshrc
