@@ -69,6 +69,13 @@ if [ ! -d "$HOME/.nvm" ]; then
     
     # Install global packages
     npm install -g npm-check git-open serve
+    
+    # Set up npm global directory configuration
+    export DOTFILES_SETUP=1
+    if [ -f "$DOTFILES_DIR/shell/conf.d/npm.sh" ]; then
+        source "$DOTFILES_DIR/shell/conf.d/npm.sh"
+    fi
+    unset DOTFILES_SETUP
 fi
 
 # Run macOS system configuration

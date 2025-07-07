@@ -162,6 +162,13 @@ if [[ "$PKG_MANAGER" == "apt" ]]; then
         curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
         $PKG_INSTALL nodejs
         success "Node.js installed"
+        
+        # Set up npm global directory configuration
+        export DOTFILES_SETUP=1
+        if [ -f "$SCRIPT_DIR/../shell/conf.d/npm.sh" ]; then
+            source "$SCRIPT_DIR/../shell/conf.d/npm.sh"
+        fi
+        unset DOTFILES_SETUP
     else
         info "Node.js already installed: $(node --version)"
     fi

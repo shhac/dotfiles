@@ -78,3 +78,9 @@ git config --global alias.file '!tig --'
 git config --global alias.dsf '!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy | less --tabs=4 -RFX; }; f'
 git config --global alias.dsfc 'dsf --cached'
 git config --global alias.compare 'dsf --no-index'
+
+# Branch cleanup utilities
+git config --global alias.merged-remote-view '!git branch -r --merged origin/master | grep origin | grep -v ">" | grep -v master | xargs -L1 | awk "{sub(/origin\//,\"\");print}"'
+git config --global alias.merged-remote-clean '!git branch -r --merged origin/master | grep origin | grep -v ">" | grep -v master | sed "s/origin\///" | xargs -I {} git push origin --delete {}'
+git config --global alias.deleted-remote-view '!git remote prune origin --dry-run'
+git config --global alias.deleted-remote-clean '!git remote prune origin'
