@@ -38,11 +38,11 @@ brew install git tig diff-so-fancy
 
 # Modern development tools
 echo "🚀 Installing modern development tools..."
-brew install doppler graphite thefuck
+brew install doppler graphite thefuck protobuf@3
 
 # Additional utilities
 echo "🛠️ Installing utilities..."
-brew install rig tldr pwgen
+brew install rig tealdeer pwgen
 
 # GUI applications (using modern syntax)
 echo "📱 Installing GUI applications..."

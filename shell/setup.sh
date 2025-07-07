@@ -66,6 +66,14 @@ if [ -f ~/.zshrc ]; then
     if [ -f ~/.oh-my-zsh/themes/ataganoster.zsh-theme ] && ! grep -q 'ZSH_THEME="ataganoster"' ~/.zshrc; then
         sed -i.bak 's/ZSH_THEME="[^"]*"/ZSH_THEME="ataganoster"/' ~/.zshrc
     fi
+    
+    # Set DEFAULT_USER for theme if not already set
+    if ! grep -q "DEFAULT_USER" ~/.zshrc; then
+        # Add DEFAULT_USER after ZSH_THEME line
+        sed -i.bak '/ZSH_THEME=/a\
+\
+export DEFAULT_USER="paul"' ~/.zshrc
+    fi
 fi
 
 # Set up local environment PATH
