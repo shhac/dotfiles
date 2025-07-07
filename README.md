@@ -18,12 +18,6 @@ chmod +x setup.sh */setup.sh
 ./setup.sh
 ```
 
-### Remote Setup (Legacy)
-
-```bash
-# macOS complete setup
-sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/setup.sh)"
-```
 
 ## Supported Platforms
 

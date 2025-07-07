@@ -27,12 +27,22 @@ This is a personal dotfiles repository containing shell configurations, git alia
 
 ### Initial Setup
 ```bash
-# Mac setup (installs Homebrew, git, shell config, development tools)
-sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/mac/setup.sh)"
+# Clone repository first
+git clone https://github.com/shhac/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+
+# Make scripts executable  
+chmod +x setup.sh */setup.sh
+
+# Full setup (detects platform automatically)
+./setup.sh
 
 # Individual components
-sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/shell/setup.sh)"
-sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/git/setup.sh)"
+./mac/setup.sh      # macOS setup
+./shell/setup.sh    # Shell configuration  
+./git/setup.sh      # Git configuration
+./linux/setup.sh    # Linux setup
+./wsl2/setup.sh     # WSL2 setup
 ```
 
 ### Git Commit Function
@@ -54,8 +64,8 @@ gm chore deps "update package versions"  # chore[deps]: update package versions
 ## Architecture Notes
 
 - **Modular design** - Each platform/tool has its own directory with setup scripts
-- **Remote installation** - Setup scripts download configuration from raw GitHub URLs
-- **Shell integration** - All custom functions/aliases loaded via `~/.zsh/conf.d/`
+- **Local installation** - Setup scripts use local configuration files for reliable, offline-capable setup
+- **Shell integration** - All custom functions/aliases loaded via `shell/conf.d/` directory
 - **Git-centric workflow** - Extensive git aliases and utilities for branch/commit management
 
 ## Development Notes
