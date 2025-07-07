@@ -4,33 +4,36 @@ set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Parse command line arguments
+INTERACTIVE=true
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -y|--yes|--non-interactive)
+            INTERACTIVE=false
+            shift
+            ;;
+        -h|--help)
+            echo "Dotfiles Setup Script"
+            echo ""
+            echo "Usage: $0 [options]"
+            echo ""
+            echo "Options:"
+            echo "  -y, --yes, --non-interactive    Run without prompts (auto-yes to all)"
+            echo "  -h, --help                      Show this help message"
+            echo ""
+            echo "Interactive mode (default) will prompt for each component."
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
-# Error handling function
-error_exit() {
-    echo -e "${RED}Error: $1${NC}" >&2
-    exit 1
-}
-
-# Success message function
-success() {
-    echo -e "${GREEN}✅ $1${NC}"
-}
-
-# Warning message function
-warning() {
-    echo -e "${YELLOW}⚠️ $1${NC}"
-}
-
-# Info message function
-info() {
-    echo -e "${BLUE}ℹ️ $1${NC}"
-}
+# Load common utilities
+source "$DOTFILES_DIR/lib/utils.sh"
 
 echo "🚀 Starting dotfiles setup..."
 echo "📂 Dotfiles directory: $DOTFILES_DIR"
@@ -59,66 +62,122 @@ fi
 info "Detected OS: $OS_TYPE"
 echo ""
 
-# Setup git configuration
-echo "🔧 Setting up git configuration..."
-if [ -f "$DOTFILES_DIR/git/setup.sh" ]; then
-    chmod +x "$DOTFILES_DIR/git/setup.sh"
-    source "$DOTFILES_DIR/git/setup.sh" || error_exit "Git setup failed"
-    success "Git configuration complete"
-else
-    error_exit "Git setup script not found"
+# Show setup overview
+echo "📋 Available components:"
+echo "  🔧 Git configuration (aliases, user settings, workflow)"
+echo "  🐚 Shell configuration (Oh My Zsh, custom themes, aliases)"
+echo "  📝 Vim configuration (basic setup with sensible defaults)"
+if [[ "$OS_TYPE" == "macOS" ]]; then
+    echo "  🍎 macOS configuration (Homebrew, system preferences, apps)"
+elif [[ "$OS_TYPE" == "WSL2" ]]; then
+    echo "  🐧 Linux base setup (development tools, modern CLI utilities)"
+    echo "  🪟 WSL2 configuration (Docker, Windows integration, X11)"
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "  🐧 Linux configuration (development tools, modern CLI utilities)"
 fi
 echo ""
 
-# Setup shell configuration  
-echo "🐚 Setting up shell configuration..."
-if [ -f "$DOTFILES_DIR/shell/setup.sh" ]; then
-    chmod +x "$DOTFILES_DIR/shell/setup.sh"
-    source "$DOTFILES_DIR/shell/setup.sh" || error_exit "Shell setup failed"
-    success "Shell configuration complete"
-else
-    error_exit "Shell setup script not found"
+if [[ "$INTERACTIVE" == "true" ]]; then
+    if ! prompt_yes_no "Continue with dotfiles setup?"; then
+        echo "Setup cancelled by user."
+        exit 0
+    fi
+    echo ""
 fi
-echo ""
+
+# Setup git configuration
+if prompt_yes_no "Set up git configuration? (aliases, user settings, workflow)"; then
+    echo "🔧 Setting up git configuration..."
+    if [ -f "$DOTFILES_DIR/git/setup.sh" ]; then
+        chmod +x "$DOTFILES_DIR/git/setup.sh"
+        export INTERACTIVE
+        source "$DOTFILES_DIR/git/setup.sh" || error_exit "Git setup failed"
+        success "Git configuration complete"
+    else
+        error_exit "Git setup script not found"
+    fi
+    echo ""
+else
+    info "Skipping git configuration"
+    echo ""
+fi
+
+# Setup shell configuration
+if prompt_yes_no "Set up shell configuration? (Oh My Zsh, custom themes, aliases)"; then
+    echo "🐚 Setting up shell configuration..."
+    if [ -f "$DOTFILES_DIR/shell/setup.sh" ]; then
+        chmod +x "$DOTFILES_DIR/shell/setup.sh"
+        export INTERACTIVE
+        source "$DOTFILES_DIR/shell/setup.sh" || error_exit "Shell setup failed"
+        success "Shell configuration complete"
+    else
+        error_exit "Shell setup script not found"
+    fi
+    echo ""
+else
+    info "Skipping shell configuration"
+    echo ""
+fi
 
 # Setup vim configuration
-echo "📝 Setting up vim configuration..."
-if [ -f "$DOTFILES_DIR/vim/setup.sh" ]; then
-    chmod +x "$DOTFILES_DIR/vim/setup.sh"
-    source "$DOTFILES_DIR/vim/setup.sh" || error_exit "Vim setup failed"
-    success "Vim configuration complete"
+if prompt_yes_no "Set up vim configuration? (basic setup with sensible defaults)"; then
+    echo "📝 Setting up vim configuration..."
+    if [ -f "$DOTFILES_DIR/vim/setup.sh" ]; then
+        chmod +x "$DOTFILES_DIR/vim/setup.sh"
+        export INTERACTIVE
+        source "$DOTFILES_DIR/vim/setup.sh" || error_exit "Vim setup failed"
+        success "Vim configuration complete"
+    else
+        warning "Vim setup script not found, skipping"
+    fi
+    echo ""
 else
-    warning "Vim setup script not found, skipping"
+    info "Skipping vim configuration"
+    echo ""
 fi
-echo ""
 
 # Run OS-specific setup
 if [[ "$OS_TYPE" == "macOS" ]]; then
-    echo "🍎 Setting up macOS configuration..."
-    if [ -f "$DOTFILES_DIR/mac/setup.sh" ]; then
-        chmod +x "$DOTFILES_DIR/mac/setup.sh"
-        source "$DOTFILES_DIR/mac/setup.sh" || error_exit "macOS setup failed"
-        success "macOS configuration complete"
+    if prompt_yes_no "Set up macOS configuration? (Homebrew, system preferences, apps)"; then
+        echo "🍎 Setting up macOS configuration..."
+        if [ -f "$DOTFILES_DIR/mac/setup.sh" ]; then
+            chmod +x "$DOTFILES_DIR/mac/setup.sh"
+            export INTERACTIVE
+            source "$DOTFILES_DIR/mac/setup.sh" || error_exit "macOS setup failed"
+            success "macOS configuration complete"
+        else
+            warning "macOS setup script not found, skipping"
+        fi
     else
-        warning "macOS setup script not found, skipping"
+        info "Skipping macOS configuration"
     fi
 elif [[ "$OS_TYPE" == "WSL2" ]]; then
-    echo "🐧 Setting up WSL2 Ubuntu configuration..."
-    if [ -f "$DOTFILES_DIR/wsl2/setup.sh" ]; then
-        chmod +x "$DOTFILES_DIR/wsl2/setup.sh"
-        source "$DOTFILES_DIR/wsl2/setup.sh" || error_exit "WSL2 setup failed"
-        success "WSL2 configuration complete"
+    if prompt_yes_no "Set up WSL2 Ubuntu configuration? (Linux base + Docker + Windows integration)"; then
+        echo "🐧 Setting up WSL2 Ubuntu configuration..."
+        if [ -f "$DOTFILES_DIR/wsl2/setup.sh" ]; then
+            chmod +x "$DOTFILES_DIR/wsl2/setup.sh"
+            export INTERACTIVE
+            source "$DOTFILES_DIR/wsl2/setup.sh" || error_exit "WSL2 setup failed"
+            success "WSL2 configuration complete"
+        else
+            warning "WSL2 setup script not found, skipping"
+        fi
     else
-        warning "WSL2 setup script not found, skipping"
+        info "Skipping WSL2 configuration"
     fi
 elif [[ "$OS_TYPE" == "Linux" ]]; then
-    echo "🐧 Setting up Linux configuration..."
-    if [ -f "$DOTFILES_DIR/linux/setup.sh" ]; then
-        chmod +x "$DOTFILES_DIR/linux/setup.sh"
-        source "$DOTFILES_DIR/linux/setup.sh" || error_exit "Linux setup failed"
-        success "Linux configuration complete"
+    if prompt_yes_no "Set up Linux configuration? (development tools, modern CLI utilities)"; then
+        echo "🐧 Setting up Linux configuration..."
+        if [ -f "$DOTFILES_DIR/linux/setup.sh" ]; then
+            chmod +x "$DOTFILES_DIR/linux/setup.sh"
+            export INTERACTIVE
+            source "$DOTFILES_DIR/linux/setup.sh" || error_exit "Linux setup failed"
+            success "Linux configuration complete"
+        else
+            warning "Linux setup script not found, skipping"
+        fi
     else
-        warning "Linux setup script not found, skipping"
+        info "Skipping Linux configuration"
     fi
 fi
 

@@ -4,33 +4,26 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Error handling function
-error_exit() {
-    echo -e "${RED}Error: $1${NC}" >&2
-    exit 1
-}
-
-# Success message function
-success() {
-    echo -e "${GREEN}✅ $1${NC}"
-}
-
-# Warning message function
-warning() {
-    echo -e "${YELLOW}⚠️ $1${NC}"
-}
-
-# Info message function
-info() {
-    echo -e "${BLUE}ℹ️ $1${NC}"
-}
+# Load common utilities if available
+if [ -f "$SCRIPT_DIR/../lib/utils.sh" ]; then
+    source "$SCRIPT_DIR/../lib/utils.sh"
+else
+    # Fallback functions if utils not available
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    NC='\033[0m'
+    error_exit() { echo -e "${RED}Error: $1${NC}" >&2; exit 1; }
+    success() { echo -e "${GREEN}✅ $1${NC}"; }
+    info() { echo -e "${BLUE}ℹ️ $1${NC}"; }
+    warning() { echo -e "${YELLOW}⚠️ $1${NC}"; }
+    prompt_yes_no() { 
+        [[ "${INTERACTIVE:-true}" == "false" ]] && return 0
+        read -p "$1 [Y/n]: " response
+        [[ "$response" =~ ^[Nn] ]] && return 1 || return 0
+    }
+fi
 
 echo "🐧 Setting up Linux development environment..."
 
@@ -58,11 +51,17 @@ fi
 info "Detected package manager: $PKG_MANAGER"
 
 # Update package lists
-info "Updating package lists..."
-$PKG_UPDATE
+if prompt_yes_no "Update package lists?"; then
+    info "Updating package lists..."
+    $PKG_UPDATE
+    success "Package lists updated"
+else
+    info "Skipping package list update"
+fi
 
 # Install essential packages
-info "Installing essential development packages..."
+if prompt_yes_no "Install essential development packages? (build tools, git, vim, zsh, etc.)"; then
+    info "Installing essential development packages..."
 if [[ "$PKG_MANAGER" == "apt" ]]; then
     $PKG_INSTALL \
         build-essential \
@@ -99,11 +98,15 @@ elif [[ "$PKG_MANAGER" == "pacman" ]]; then
         unzip
 fi
 
-success "Essential packages installed"
+    success "Essential packages installed"
+else
+    info "Skipping essential package installation"
+fi
 
 # Install modern CLI tools
-info "Installing modern CLI tools..."
-install_modern_tools() {
+if prompt_yes_no "Install modern CLI tools? (exa, bat, fd, ripgrep - where available)"; then
+    info "Installing modern CLI tools..."
+    install_modern_tools() {
     # Try to install via package manager first, fall back to manual installation
     
     # exa (better ls)
@@ -152,11 +155,14 @@ install_modern_tools() {
     fi
 }
 
-install_modern_tools
-success "Modern CLI tools installation attempted"
+    install_modern_tools
+    success "Modern CLI tools installation attempted"
+else
+    info "Skipping modern CLI tools installation"
+fi
 
 # Install Node.js via NodeSource repository (for apt-based systems)
-if [[ "$PKG_MANAGER" == "apt" ]]; then
+if [[ "$PKG_MANAGER" == "apt" ]] && prompt_yes_no "Install Node.js LTS? (JavaScript runtime)"; then
     info "Installing Node.js LTS..."
     if ! command -v node >/dev/null 2>&1; then
         curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
@@ -172,18 +178,24 @@ if [[ "$PKG_MANAGER" == "apt" ]]; then
     else
         info "Node.js already installed: $(node --version)"
     fi
+elif [[ "$PKG_MANAGER" == "apt" ]]; then
+    info "Skipping Node.js installation"
 fi
 
 # Install Python 3 and pip
-info "Installing Python 3 and pip..."
-if [[ "$PKG_MANAGER" == "apt" ]]; then
-    $PKG_INSTALL python3 python3-pip
-elif [[ "$PKG_MANAGER" == "yum" ]] || [[ "$PKG_MANAGER" == "dnf" ]]; then
-    $PKG_INSTALL python3 python3-pip
-elif [[ "$PKG_MANAGER" == "pacman" ]]; then
-    $PKG_INSTALL python python-pip
+if prompt_yes_no "Install Python 3 and pip? (Python runtime and package manager)"; then
+    info "Installing Python 3 and pip..."
+    if [[ "$PKG_MANAGER" == "apt" ]]; then
+        $PKG_INSTALL python3 python3-pip
+    elif [[ "$PKG_MANAGER" == "yum" ]] || [[ "$PKG_MANAGER" == "dnf" ]]; then
+        $PKG_INSTALL python3 python3-pip
+    elif [[ "$PKG_MANAGER" == "pacman" ]]; then
+        $PKG_INSTALL python python-pip
+    fi
+    success "Python 3 and pip installed"
+else
+    info "Skipping Python installation"
 fi
-success "Python 3 and pip installed"
 
 # Create linux-specific aliases file
 info "Creating Linux-specific aliases..."
