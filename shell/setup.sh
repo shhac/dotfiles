@@ -16,7 +16,7 @@ echo "🐚 Setting up shell configuration..."
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "📦 Installing Oh My Zsh..."
     # Use updated repository URL
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended || error_exit "Oh My Zsh installation failed"
+    CHSH=no RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || error_exit "Oh My Zsh installation failed"
 fi
 
 # Install Powerline fonts via Homebrew (more reliable than git clone)

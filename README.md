@@ -11,6 +11,9 @@ Personal dotfiles for macOS development environment setup with git, shell, and v
 git clone https://github.com/shhac/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
+# Make setup scripts executable
+chmod +x setup.sh */setup.sh
+
 # Run complete setup
 ./setup.sh
 ```
@@ -41,6 +44,9 @@ sh -c "$(curl -fsSL https://raw.github.com/shhac/dotfiles/master/setup.sh)"
 You can run individual setup scripts for specific components:
 
 ```bash
+# Make specific scripts executable if needed
+chmod +x git/setup.sh shell/setup.sh vim/setup.sh mac/setup.sh
+
 # Git configuration only
 ./git/setup.sh
 
@@ -107,9 +113,10 @@ dotfiles/
 
 ### Common Issues
 
-1. **Permission errors**: Ensure scripts are executable with `chmod +x setup.sh`
-2. **Homebrew path issues**: Restart terminal after Homebrew installation
-3. **Oh My Zsh conflicts**: Remove existing `~/.oh-my-zsh` if switching themes fails
+1. **Permission errors**: Make scripts executable with `chmod +x setup.sh */setup.sh`
+2. **"Command not found" errors**: Run `chmod +x` on the specific script you're trying to execute
+3. **Homebrew path issues**: Restart terminal after Homebrew installation
+4. **Oh My Zsh conflicts**: Remove existing `~/.oh-my-zsh` if switching themes fails
 
 ### Manual Fixes
 
