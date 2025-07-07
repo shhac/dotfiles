@@ -52,8 +52,6 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     else
         OS_TYPE="Linux"
     fi
-elif [[ "$OSTYPE" == "cygwin" ]]; then
-    OS_TYPE="Cygwin"
 else
     warning "Unknown operating system: $OSTYPE"
 fi
@@ -112,16 +110,6 @@ elif [[ "$OS_TYPE" == "WSL2" ]]; then
         success "WSL2 configuration complete"
     else
         warning "WSL2 setup script not found, skipping"
-    fi
-elif [[ "$OS_TYPE" == "Cygwin" ]]; then
-    echo "🖥️ Setting up Cygwin configuration..."
-    warning "Cygwin setup is deprecated. Consider using WSL2 instead."
-    if [ -f "$DOTFILES_DIR/cygwin/setup.sh" ]; then
-        chmod +x "$DOTFILES_DIR/cygwin/setup.sh"
-        source "$DOTFILES_DIR/cygwin/setup.sh" || error_exit "Cygwin setup failed"
-        success "Cygwin configuration complete"
-    else
-        warning "Cygwin setup script not found, skipping"
     fi
 fi
 

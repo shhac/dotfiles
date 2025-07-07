@@ -33,9 +33,6 @@ Complete development environment with Homebrew, modern CLI tools, and system pre
 ### WSL2 (Windows Subsystem for Linux)
 Modern Windows development using Ubuntu on WSL2 with Docker, modern CLI tools, and Windows interoperability.
 
-### Cygwin (Legacy)
-Basic setup for legacy Windows environments. **Deprecated - use WSL2 instead.**
-
 ## What Gets Configured
 
 - **Git**: Aliases, user settings, push/pull configuration, diff tools
