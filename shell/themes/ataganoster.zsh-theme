@@ -248,8 +248,28 @@ prompt_hg() {
 }
 
 # Dir: current working directory
-prompt_dir() {
-  prompt_segment blue $CURRENT_FG '%~'
+prompt_dir () {
+  local path='%(4~|%-1~/…/%2~|%~)'
+  # Expand the path first
+  local expanded="${(%)path}"
+
+  # Truncate each directory component to 16 chars
+  local -a parts
+  parts=("${(@s:/:)expanded}")
+  local result=""
+
+  for part in $parts; do
+    if [[ ${#part} -gt 16 ]]; then
+	part="${part:0:15}…"
+    fi
+    if [[ -n $result ]]; then
+	result="${result}/${part}"
+    else
+	result="$part"
+    fi
+  done
+
+  prompt_segment blue $CURRENT_FG "$result"
 }
 
 # Virtualenv: current working virtualenv
