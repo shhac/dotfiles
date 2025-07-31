@@ -185,7 +185,11 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    local branch="${ref/refs\/heads\//$PL_BRANCH_CHAR }"
+    if [[ ${#branch} -gt 17 ]]; then  # 17 because of the branch character
+      branch="${branch:0:16}…"
+    fi
+    echo -n "${branch}${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
