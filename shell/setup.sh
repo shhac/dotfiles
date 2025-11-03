@@ -62,14 +62,15 @@ else
     info "Skipping shell configuration files"
 fi
 
-# Copy custom theme if it exists
-if [ -f "$SCRIPT_DIR/themes/ataganoster.zsh-theme" ]; then
-    if prompt_yes_no "Install custom ataganoster theme? (enhanced prompt with git info)"; then
-        echo "🎨 Installing custom theme..."
-        cp "$SCRIPT_DIR/themes/ataganoster.zsh-theme" ~/.oh-my-zsh/themes/
-        success "Custom theme installed"
+# Copy custom themes if they exist
+if [ -d "$SCRIPT_DIR/themes" ]; then
+    if prompt_yes_no "Install custom themes? (shhac-starship collection and ataganoster)"; then
+        echo "🎨 Installing custom themes..."
+        mkdir -p ~/.oh-my-zsh/custom/themes
+        cp "$SCRIPT_DIR/themes/"*.zsh-theme ~/.oh-my-zsh/custom/themes/ 2>/dev/null || true
+        success "Custom themes installed"
     else
-        info "Skipping custom theme"
+        info "Skipping custom themes"
     fi
 fi
 
@@ -102,10 +103,10 @@ if [ -f ~/.zshrc ]; then
             success "Added git-open plugin"
         fi
         
-        # Set theme to ataganoster if available and not already set
-        if [ -f ~/.oh-my-zsh/themes/ataganoster.zsh-theme ] && ! grep -q 'ZSH_THEME="ataganoster"' ~/.zshrc; then
-            sed -i.bak 's/ZSH_THEME="[^"]*"/ZSH_THEME="ataganoster"/' ~/.zshrc
-            success "Set ataganoster theme"
+        # Set theme to shhac-starship-rounded-bubble if available and not already set
+        if [ -f ~/.oh-my-zsh/custom/themes/shhac-starship-rounded-bubble.zsh-theme ] && ! grep -q 'ZSH_THEME="shhac-starship-rounded-bubble"' ~/.zshrc; then
+            sed -i.bak 's/ZSH_THEME="[^"]*"/ZSH_THEME="shhac-starship-rounded-bubble"/' ~/.zshrc
+            success "Set shhac-starship-rounded-bubble theme"
         fi
         
         # Set DEFAULT_USER for theme if not already set
