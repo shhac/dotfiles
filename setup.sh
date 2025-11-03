@@ -67,6 +67,7 @@ echo "📋 Available components:"
 echo "  🔧 Git configuration (aliases, user settings, workflow)"
 echo "  🐚 Shell configuration (Oh My Zsh, custom themes, aliases)"
 echo "  📝 Vim configuration (basic setup with sensible defaults)"
+echo "  👻 Ghostty terminal configuration (fast modern terminal emulator)"
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  🍎 macOS configuration (Homebrew, system preferences, apps)"
 elif [[ "$OS_TYPE" == "WSL2" ]]; then
@@ -136,6 +137,23 @@ else
     echo ""
 fi
 
+# Setup Ghostty terminal configuration
+if prompt_yes_no "Set up Ghostty terminal configuration? (fast modern terminal emulator)"; then
+    echo "👻 Setting up Ghostty terminal configuration..."
+    if [ -f "$DOTFILES_DIR/ghostty/setup.sh" ]; then
+        chmod +x "$DOTFILES_DIR/ghostty/setup.sh"
+        export INTERACTIVE
+        source "$DOTFILES_DIR/ghostty/setup.sh" || error_exit "Ghostty setup failed"
+        success "Ghostty configuration complete"
+    else
+        warning "Ghostty setup script not found, skipping"
+    fi
+    echo ""
+else
+    info "Skipping Ghostty configuration"
+    echo ""
+fi
+
 # Run OS-specific setup
 if [[ "$OS_TYPE" == "macOS" ]]; then
     if prompt_yes_no "Set up macOS configuration? (Homebrew, system preferences, apps)"; then
@@ -189,6 +207,7 @@ echo "  • Git aliases and configuration"
 echo "  • Shell (zsh) with Oh My Zsh"
 echo "  • Custom shell functions and aliases"
 echo "  • Vim configuration"
+echo "  • Ghostty terminal configuration"
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  • macOS system preferences"
     echo "  • Homebrew packages"
@@ -218,9 +237,10 @@ elif [[ "$OS_TYPE" == "Linux" ]]; then
 fi
 echo ""
 echo "📖 For individual component setup, run:"
-echo "  • ./git/setup.sh    - Git configuration only"
-echo "  • ./shell/setup.sh  - Shell configuration only"
-echo "  • ./vim/setup.sh    - Vim configuration only"
+echo "  • ./git/setup.sh     - Git configuration only"
+echo "  • ./shell/setup.sh   - Shell configuration only"
+echo "  • ./vim/setup.sh     - Vim configuration only"
+echo "  • ./ghostty/setup.sh - Ghostty terminal configuration only"
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "  • ./mac/setup.sh    - macOS full setup"
 elif [[ "$OS_TYPE" == "WSL2" ]]; then

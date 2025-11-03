@@ -44,6 +44,7 @@ Standard Linux distribution support with essential development tools and modern 
 - **Git**: Aliases, user settings, push/pull configuration, diff tools
 - **Shell**: Oh My Zsh with custom theme, plugins, and configuration files
 - **Vim**: Basic vim configuration with syntax highlighting and sensible defaults
+- **Ghostty**: Modern terminal emulator with custom themes and keybindings
 - **Platform-specific**: System preferences, package management, development tools
 
 ### Tools Installed
@@ -83,6 +84,9 @@ chmod +x git/setup.sh shell/setup.sh vim/setup.sh mac/setup.sh
 # Vim configuration only
 ./vim/setup.sh
 
+# Ghostty terminal configuration only
+./ghostty/setup.sh
+
 # macOS full setup (includes all components)
 ./mac/setup.sh
 
@@ -113,6 +117,13 @@ chmod +x git/setup.sh shell/setup.sh vim/setup.sh mac/setup.sh
 - **Tool integration**: Doppler, Graphite, Claude CLI support
 - **Plugin support**: git-open and other productivity plugins
 
+### Ghostty Terminal
+- **Fast & modern**: GPU-accelerated terminal emulator written in Zig
+- **Catppuccin Mocha theme**: Beautiful, easy-on-the-eyes color scheme
+- **Fira Code font**: Programming font with ligature support
+- **Custom keybindings**: Shift-Enter for newlines and more
+- **Cross-platform**: macOS, Linux, and future Windows support
+
 ### Modern Development Tools
 - **Doppler**: Secrets management with `dope()` function
 - **Graphite**: Git workflow tool with completions
@@ -135,6 +146,10 @@ dotfiles/
 ├── vim/                   # Vim configuration
 │   ├── setup.sh
 │   └── .vimrc
+├── ghostty/               # Ghostty terminal configuration
+│   ├── setup.sh
+│   ├── config
+│   └── README.md
 ├── mac/                   # macOS-specific setup
 │   ├── setup.sh
 │   ├── osx-config.sh      # System preferences

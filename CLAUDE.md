@@ -51,6 +51,12 @@ This is a personal dotfiles repository containing shell configurations, git alia
 - **Basic setup** - Sensible defaults with syntax highlighting
 - **Cross-platform** - Works consistently across all supported platforms
 
+### Ghostty Terminal (`ghostty/`)
+- **Modern terminal** - Fast GPU-accelerated terminal emulator written in Zig
+- **Configuration** - Custom themes (Catppuccin Mocha), fonts (Fira Code), and keybindings
+- **Cross-platform** - Supports macOS and Linux with consistent configuration
+- **Setup script** - Installs configuration to `~/.config/ghostty/config`
+
 ## Setup Commands
 
 ### Initial Setup
@@ -70,8 +76,10 @@ chmod +x setup.sh */setup.sh
 
 # Individual components (also interactive)
 ./mac/setup.sh      # macOS setup
-./shell/setup.sh    # Shell configuration  
+./shell/setup.sh    # Shell configuration
 ./git/setup.sh      # Git configuration
+./vim/setup.sh      # Vim configuration
+./ghostty/setup.sh  # Ghostty terminal configuration
 ./linux/setup.sh    # Linux setup
 ./wsl2/setup.sh     # WSL2 setup
 ```
