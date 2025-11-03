@@ -14,7 +14,7 @@ gwt-new() {
     # Check if branch name is provided
     if [[ -z "$1" ]]; then
         echo -e "${RED}${BOLD}Error:${NC} ${RED}Please provide a branch name${NC}"
-        echo -e "${YELLOW}Usage:${NC} claudetree <branch-name>"
+        echo -e "${YELLOW}Usage:${NC} gwt-new <branch-name>"
         return 1
     fi
     
