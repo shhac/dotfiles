@@ -53,7 +53,7 @@ prompt_status() {
     plain_symbols+="⚡"
   fi
 
-  if [[ $(jobs -l | wc -l) -gt 0 ]]; then
+  if [[ ${#jobtexts} -gt 0 ]]; then
     symbols+="%{%F{cyan}%}⚙%{%f%}"
     plain_symbols+="⚙"
   fi
@@ -70,7 +70,9 @@ prompt_status() {
 # Context: user@hostname (only shown when relevant)
 prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    local plain=" %n@%m"
+    local plain_user="${(%):-%n}"
+    local plain_host="${(%):-%m}"
+    local plain=" ${plain_user}@${plain_host}"
     local colored=" %{%F{default}%}%(!.%{%F{yellow}%}.)%n@%m%{%f%}"
     echo "$colored|$plain"
   else
@@ -193,6 +195,11 @@ prompt_git() {
 build_prompt() {
   RETVAL=$?
 
+  # Safety check for COLUMNS
+  if [[ -z $COLUMNS ]] || [[ $COLUMNS -lt 40 ]]; then
+    COLUMNS=${COLUMNS:-80}
+  fi
+
   # Capture components as "colored|plain"
   local time_data="$(prompt_time)"
   local status_data="$(prompt_status)"
@@ -229,7 +236,7 @@ build_prompt() {
   local full_line_plain="╭─${time_plain}${status_plain}${context_plain}${path_plain}${venv_plain}${node_plain}${git_plain} "
   local full_line_length=${#full_line_plain}
   local bubble_chars=2  # bubble left + bubble right
-  local buffer=8
+  local buffer=12  # increased buffer for safety with unicode/wide chars
   local needed_width=$((full_line_length + bubble_chars + buffer))
 
   # DEBUG: Uncomment to see calculation
