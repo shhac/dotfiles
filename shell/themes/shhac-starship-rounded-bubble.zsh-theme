@@ -68,7 +68,9 @@ __shhac_starship_set_component_output() {
 
 # Time
 __shhac_starship_prompt_time() {
-  local plain=" ${(%):-%D{%H:%M:%S}}"
+  local time_fmt="%D{%H:%M:%S}"
+  local time_str="${(%)time_fmt}"
+  local plain=" $time_str"
   local colored="%{%F{cyan}%}$plain%{%f%}"
   __shhac_starship_set_component_output time "$colored" "$plain"
 }
