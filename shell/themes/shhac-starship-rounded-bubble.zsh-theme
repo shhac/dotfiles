@@ -146,7 +146,7 @@ prompt_node() {
   fi
 }
 
-# Git
+# Git - Optimized with single git status call
 prompt_git() {
   (( $+commands[git] )) || { echo "|"; return; }
   if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" = 1 ]]; then
@@ -159,19 +159,46 @@ prompt_git() {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
     PL_BRANCH_CHAR=$'\ue0a0'
   }
-  local ref dirty mode repo_path git_color
 
-  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    repo_path=$(git rev-parse --git-dir 2>/dev/null)
-    dirty=$(parse_git_dirty)
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
+  # Single git status call with comprehensive output
+  local status_output
+  status_output=$(git status --porcelain=v2 --branch 2>/dev/null)
+  [[ -z $status_output ]] && { echo "|"; return; }
 
-    if [[ -n $dirty ]]; then
-      git_color="%{%F{yellow}%}"
-    else
-      git_color="%{%F{green}%}"
-    fi
+  # Parse status output
+  local branch_name=""
+  local has_staged=0
+  local has_unstaged=0
+  local is_detached=0
 
+  while IFS= read -r line; do
+    case $line in
+      "# branch.head "*)
+        branch_name="${line#\# branch.head }"
+        [[ $branch_name == "(detached)" ]] && is_detached=1
+        ;;
+      "1 "* | "2 "*)
+        # Ordinary changed entries (XY submodule mH mI mW hH hI path)
+        local xy="${line:2:2}"
+        [[ $xy != " ." && $xy != ".." && $xy[1] != "." ]] && has_staged=1
+        [[ $xy != ". " && $xy != ".." && $xy[2] != "." ]] && has_unstaged=1
+        ;;
+      "? "*)
+        # Untracked files
+        [[ "${DISABLE_UNTRACKED_FILES_DIRTY:-}" != "true" ]] && has_unstaged=1
+        ;;
+    esac
+  done <<< "$status_output"
+
+  # Handle detached HEAD - get short SHA
+  if [[ $is_detached -eq 1 ]]; then
+    branch_name="➦ $(git rev-parse --short HEAD 2>/dev/null)"
+  fi
+
+  # Check for special modes
+  local mode=""
+  local repo_path=$(git rev-parse --git-dir 2>/dev/null)
+  if [[ -n $repo_path ]]; then
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
       mode=" <B>"
     elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
@@ -179,21 +206,32 @@ prompt_git() {
     elif [[ -e "${repo_path}/rebase" || -e "${repo_path}/rebase-apply" || -e "${repo_path}/rebase-merge" || -e "${repo_path}/../.dotest" ]]; then
       mode=" >R>"
     fi
-
-    vcs_info
-
-    local branch="${ref/refs\/heads\//$PL_BRANCH_CHAR }"
-    if [[ ${#branch} -gt 17 ]]; then
-      branch="${branch:0:16}…"
-    fi
-
-    local plain_vcs="${vcs_info_msg_0_%% }"
-    local plain=" 󰊢 ${branch}${plain_vcs}${mode}"
-    local colored=" ${git_color}󰊢 ${branch}${vcs_info_msg_0_%% }${mode}%{%f%}"
-    echo "$colored|$plain"
-  else
-    echo "|"
   fi
+
+  # Determine color based on dirty status
+  local git_color
+  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+    git_color="%{%F{yellow}%}"
+  else
+    git_color="%{%F{green}%}"
+  fi
+
+  # Build indicators
+  local indicators=""
+  local plain_indicators=""
+  [[ $has_staged -eq 1 ]] && indicators+="✚" && plain_indicators+="✚"
+  [[ $has_unstaged -eq 1 ]] && indicators+="●" && plain_indicators+="●"
+  [[ -n $indicators ]] && indicators=" $indicators" && plain_indicators=" $plain_indicators"
+
+  # Format branch name
+  local branch="${PL_BRANCH_CHAR} ${branch_name}"
+  if [[ ${#branch} -gt 17 ]]; then
+    branch="${branch:0:16}…"
+  fi
+
+  local plain=" 󰊢 ${branch}${plain_indicators}${mode}"
+  local colored=" ${git_color}󰊢 ${branch}${indicators}${mode}%{%f%}"
+  echo "$colored|$plain"
 }
 
 ## Main prompt
