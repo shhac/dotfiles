@@ -30,11 +30,17 @@
     typeset -g __shhac_theme_use_powerline=0
     __shhac_theme_bubble_left='['
     __shhac_theme_bubble_right=']'
+    typeset -g __shhac_theme_git_icon='g:'
+    typeset -g __shhac_theme_node_icon='n:'
+    typeset -g __shhac_theme_venv_icon='v:'
   else
     typeset -g __shhac_theme_use_powerline=1
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
     __shhac_theme_bubble_left=$'\ue0b6'
     __shhac_theme_bubble_right=$'\ue0b4'
+    typeset -g __shhac_theme_git_icon='󰊢'
+    typeset -g __shhac_theme_node_icon='⬢'
+    typeset -g __shhac_theme_venv_icon=''
   fi
 }
 
@@ -194,7 +200,7 @@ __shhac_starship_prompt_virtualenv() {
   if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
     local venv_name="${virtualenv_path:t}"
     local plain=" $venv_name"
-    local colored=" %{%F{cyan}%} $venv_name%{%f%}"
+    local colored=" %{%F{cyan}%}$__shhac_theme_venv_icon $venv_name%{%f%}"
     __shhac_starship_set_component_output venv "$colored" "$plain"
   else
     __shhac_starship_set_component_output venv "" ""
@@ -218,8 +224,8 @@ __shhac_starship_prompt_node() {
     local minor="${rest%%.*}" # Get minor version
     nv="${major}.${minor}"    # Combine major.minor
 
-    local plain=" ⬢ $nv"
-    local colored=" %{%F{magenta}%}⬢ $nv%{%f%}"
+    local plain=" $__shhac_theme_node_icon $nv"
+    local colored=" %{%F{magenta}%}$__shhac_theme_node_icon $nv%{%f%}"
     __shhac_starship_set_component_output node "$colored" "$plain"
   else
     __shhac_starship_set_component_output node "" ""
@@ -325,8 +331,8 @@ __shhac_starship_prompt_git() {
     branch="${branch:0:29}…"
   fi
 
-  local plain=" 󰊢 ${branch}${plain_indicators}${mode}"
-  local colored=" ${git_color}󰊢 ${branch}${indicators}${mode}%{%f%}"
+  local plain=" $__shhac_theme_git_icon ${branch}${plain_indicators}${mode}"
+  local colored=" ${git_color}$__shhac_theme_git_icon ${branch}${indicators}${mode}%{%f%}"
   __shhac_starship_set_component_output git "$colored" "$plain"
 }
 
