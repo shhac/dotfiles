@@ -13,6 +13,20 @@
   __shhac_theme_bubble_right=$'\ue0b4'  #
 }
 
+# Initialize git/vcs_info settings once at theme load
+() {
+  setopt promptsubst
+  autoload -Uz vcs_info
+
+  zstyle ':vcs_info:*' enable git
+  zstyle ':vcs_info:*' get-revision true
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' stagedstr '✚'
+  zstyle ':vcs_info:*' unstagedstr '●'
+  zstyle ':vcs_info:*' formats ' %u%c'
+  zstyle ':vcs_info:*' actionformats ' %u%c'
+}
+
 # Helper: Open bubble
 __shhac_theme_bubble_open() {
   echo -n "%{%k%}%{%F{236}%}$__shhac_theme_bubble_left%{%K{236}%}%{%F{default}%}"
@@ -27,7 +41,7 @@ __shhac_theme_bubble_close() {
 
 # Time
 prompt_time() {
-  local plain=" $(date '+%H:%M:%S')"
+  local plain=" ${(%):-%D{%H:%M:%S}}"
   local colored="%{%F{cyan}%}$plain%{%f%}"
   echo "$colored|$plain"
 }
@@ -110,8 +124,9 @@ prompt_dir() {
 prompt_virtualenv() {
   local virtualenv_path="$VIRTUAL_ENV"
   if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
-    local plain=" $(basename $virtualenv_path)"
-    local colored=" %{%F{cyan}%} $(basename $virtualenv_path)%{%f%}"
+    local venv_name="${virtualenv_path:t}"
+    local plain=" $venv_name"
+    local colored=" %{%F{cyan}%} $venv_name%{%f%}"
     echo "$colored|$plain"
   else
     echo "|"
@@ -165,16 +180,6 @@ prompt_git() {
       mode=" >R>"
     fi
 
-    setopt promptsubst
-    autoload -Uz vcs_info
-
-    zstyle ':vcs_info:*' enable git
-    zstyle ':vcs_info:*' get-revision true
-    zstyle ':vcs_info:*' check-for-changes true
-    zstyle ':vcs_info:*' stagedstr '✚'
-    zstyle ':vcs_info:*' unstagedstr '●'
-    zstyle ':vcs_info:*' formats ' %u%c'
-    zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
 
     local branch="${ref/refs\/heads\//$PL_BRANCH_CHAR }"
@@ -193,7 +198,7 @@ prompt_git() {
 
 ## Main prompt
 build_prompt() {
-  RETVAL=$?
+  local RETVAL=$?
 
   # Safety check for COLUMNS
   if [[ -z $COLUMNS ]] || [[ $COLUMNS -lt 40 ]]; then
