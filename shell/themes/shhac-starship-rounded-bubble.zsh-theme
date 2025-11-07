@@ -219,12 +219,19 @@ __shhac_starship_prompt_git() {
   local has_staged=0
   local has_unstaged=0
   local is_detached=0
+  local ahead=0
+  local behind=0
 
   while IFS= read -r line; do
     case $line in
       "# branch.head "*)
         branch_name="${line#\# branch.head }"
         [[ $branch_name == "(detached)" ]] && is_detached=1
+        ;;
+      "# branch.ab "*)
+        local ab="${line#\# branch.ab }"
+        ahead="${ab% *}"
+        behind="${ab#* }"
         ;;
       "1 "* | "2 "*)
         # Ordinary changed entries (XY submodule mH mI mW hH hI path)
@@ -270,6 +277,8 @@ __shhac_starship_prompt_git() {
   local plain_indicators=""
   [[ $has_staged -eq 1 ]] && indicators+="✚" && plain_indicators+="✚"
   [[ $has_unstaged -eq 1 ]] && indicators+="●" && plain_indicators+="●"
+  [[ $ahead -gt 0 ]] && indicators+="↑$ahead" && plain_indicators+="↑$ahead"
+  [[ $behind -gt 0 ]] && indicators+="↓$behind" && plain_indicators+="↓$behind"
   [[ -n $indicators ]] && indicators=" $indicators" && plain_indicators=" $plain_indicators"
 
   # Format branch name
