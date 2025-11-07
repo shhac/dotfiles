@@ -137,14 +137,14 @@ __shhac_starship_prompt_dir() {
   local path='%(4~|%-1~/…/%2~|%~)'
   local expanded="${(%)path}"
 
-  # Truncate each directory component to 16 chars
+  # Truncate each directory component to 24 chars
   local -a parts
   parts=("${(@s:/:)expanded}")
   local result=""
 
   for part in $parts; do
-    if [[ ${#part} -gt 16 ]]; then
-      part="${part:0:15}…"
+    if [[ ${#part} -gt 24 ]]; then
+      part="${part:0:23}…"
     fi
     if [[ -n $result ]]; then
       result="${result}/${part}"
