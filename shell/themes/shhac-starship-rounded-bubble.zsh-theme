@@ -13,6 +13,16 @@
   __shhac_theme_bubble_right=$'\ue0b4'  #
 }
 
+# User Configuration: Control component visibility
+# Set to false in your .zshrc before theme loads to hide components
+: ${SHHAC_THEME_SHOW_TIME:=true}
+: ${SHHAC_THEME_SHOW_STATUS:=true}
+: ${SHHAC_THEME_SHOW_CONTEXT:=true}
+: ${SHHAC_THEME_SHOW_PATH:=true}
+: ${SHHAC_THEME_SHOW_VENV:=true}
+: ${SHHAC_THEME_SHOW_NODE:=true}
+: ${SHHAC_THEME_SHOW_GIT:=true}
+
 # Detect Powerline/Nerd Font support and set fallback mode
 () {
   # Test if Powerline font characters render correctly
@@ -92,6 +102,7 @@ __shhac_starship_set_component_output() {
 
 # Time
 __shhac_starship_prompt_time() {
+  [[ "$SHHAC_THEME_SHOW_TIME" != "true" ]] && { __shhac_starship_set_component_output time "" ""; return; }
   local time_fmt="%D{%H:%M:%S}"
   local time_str="${(%)time_fmt}"
   local plain=" $time_str"
@@ -101,6 +112,7 @@ __shhac_starship_prompt_time() {
 
 # Status: errors, root, background jobs
 __shhac_starship_prompt_status() {
+  [[ "$SHHAC_THEME_SHOW_STATUS" != "true" ]] && { __shhac_starship_set_component_output status "" ""; return; }
   local -a symbols
   local -a plain_symbols
 
@@ -136,6 +148,7 @@ __shhac_starship_prompt_status() {
 
 # Context: user@hostname (only shown when relevant)
 __shhac_starship_prompt_context() {
+  [[ "$SHHAC_THEME_SHOW_CONTEXT" != "true" ]] && { __shhac_starship_set_component_output context "" ""; return; }
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     local plain_user="${(%):-%n}"
     local plain_host="${(%):-%m}"
@@ -149,6 +162,7 @@ __shhac_starship_prompt_context() {
 
 # Dir: current working directory
 __shhac_starship_prompt_dir() {
+  [[ "$SHHAC_THEME_SHOW_PATH" != "true" ]] && { __shhac_starship_set_component_output path "" ""; return; }
   local path='%(4~|%-1~/…/%2~|%~)'
   local expanded="${(%)path}"
 
@@ -175,6 +189,7 @@ __shhac_starship_prompt_dir() {
 
 # Virtualenv
 __shhac_starship_prompt_virtualenv() {
+  [[ "$SHHAC_THEME_SHOW_VENV" != "true" ]] && { __shhac_starship_set_component_output venv "" ""; return; }
   local virtualenv_path="$VIRTUAL_ENV"
   if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
     local venv_name="${virtualenv_path:t}"
@@ -188,6 +203,7 @@ __shhac_starship_prompt_virtualenv() {
 
 # Node version
 __shhac_starship_prompt_node() {
+  [[ "$SHHAC_THEME_SHOW_NODE" != "true" ]] && { __shhac_starship_set_component_output node "" ""; return; }
   if (( __shhac_has_node )); then
     local nv
     nv="$(node --version 2>/dev/null)" || {
@@ -212,6 +228,7 @@ __shhac_starship_prompt_node() {
 
 # Git - Optimized with single git status call
 __shhac_starship_prompt_git() {
+  [[ "$SHHAC_THEME_SHOW_GIT" != "true" ]] && { __shhac_starship_set_component_output git "" ""; return; }
   (( __shhac_has_git )) || { __shhac_starship_set_component_output git "" ""; return; }
   if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" = 1 ]]; then
     __shhac_starship_set_component_output git "" ""
