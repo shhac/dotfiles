@@ -25,7 +25,16 @@
   zstyle ':vcs_info:*' unstagedstr '●'
   zstyle ':vcs_info:*' formats ' %u%c'
   zstyle ':vcs_info:*' actionformats ' %u%c'
+
+  # Cache command existence
+  typeset -g __shhac_has_git __shhac_has_node
+  (( $+commands[git] )) && __shhac_has_git=1 || __shhac_has_git=0
+  (( $+commands[node] )) && __shhac_has_node=1 || __shhac_has_node=0
 }
+
+# Initialize component output storage arrays once at theme load
+typeset -gA __shhac_starship_component_colored
+typeset -gA __shhac_starship_component_plain
 
 # Configuration: Define bubble components and their order
 typeset -ga PROMPT_BUBBLE_1=(time status context path)
@@ -164,9 +173,20 @@ __shhac_starship_prompt_virtualenv() {
 
 # Node version
 __shhac_starship_prompt_node() {
-  local nv
-  if [ -x "$(command -v node)" ]; then
-    nv="$(node --version | sed -E 's/^v([0-9]+\.[0-9]+).*$/\1/')"
+  if (( __shhac_has_node )); then
+    local nv
+    nv="$(node --version 2>/dev/null)" || {
+      __shhac_starship_set_component_output node "" ""
+      return
+    }
+
+    # Extract major.minor version using native zsh parameter expansion
+    nv="${nv#v}"              # Remove leading 'v'
+    local major="${nv%%.*}"   # Get major version
+    local rest="${nv#*.}"     # Remove major and first dot
+    local minor="${rest%%.*}" # Get minor version
+    nv="${major}.${minor}"    # Combine major.minor
+
     local plain=" ⬢ $nv"
     local colored=" %{%F{magenta}%}⬢ $nv%{%f%}"
     __shhac_starship_set_component_output node "$colored" "$plain"
@@ -177,7 +197,7 @@ __shhac_starship_prompt_node() {
 
 # Git - Optimized with single git status call
 __shhac_starship_prompt_git() {
-  (( $+commands[git] )) || { __shhac_starship_set_component_output git "" ""; return; }
+  (( __shhac_has_git )) || { __shhac_starship_set_component_output git "" ""; return; }
   if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" = 1 ]]; then
     __shhac_starship_set_component_output git "" ""
     return
@@ -209,8 +229,8 @@ __shhac_starship_prompt_git() {
       "1 "* | "2 "*)
         # Ordinary changed entries (XY submodule mH mI mW hH hI path)
         local xy="${line:2:2}"
-        [[ $xy != " ." && $xy != ".." && $xy[1] != "." ]] && has_staged=1
-        [[ $xy != ". " && $xy != ".." && $xy[2] != "." ]] && has_unstaged=1
+        [[ $xy[1] != "." ]] && has_staged=1
+        [[ $xy[2] != "." ]] && has_unstaged=1
         ;;
       "? "*)
         # Untracked files
@@ -272,9 +292,9 @@ build_prompt() {
     COLUMNS=${COLUMNS:-80}
   fi
 
-  # Initialize component output storage
-  typeset -gA __shhac_starship_component_colored
-  typeset -gA __shhac_starship_component_plain
+  # Clear component output storage for this render
+  __shhac_starship_component_colored=()
+  __shhac_starship_component_plain=()
 
   # Collect all components via loop
   local component
