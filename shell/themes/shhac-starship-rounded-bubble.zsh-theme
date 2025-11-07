@@ -274,8 +274,8 @@ __shhac_starship_prompt_git() {
 
   # Format branch name
   local branch="${PL_BRANCH_CHAR} ${branch_name}"
-  if [[ ${#branch} -gt 17 ]]; then
-    branch="${branch:0:16}…"
+  if [[ ${#branch} -gt 30 ]]; then
+    branch="${branch:0:29}…"
   fi
 
   local plain=" 󰊢 ${branch}${plain_indicators}${mode}"
