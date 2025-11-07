@@ -13,6 +13,21 @@
   __shhac_theme_bubble_right=$'\ue0b4'  #
 }
 
+# Detect Powerline/Nerd Font support and set fallback mode
+() {
+  # Test if Powerline font characters render correctly
+  # If the bubble character is multi-byte when it should be single-width,
+  # the font doesn't support Powerline glyphs
+  if [[ $(echo -n "$__shhac_theme_bubble_left" | wc -m) -eq 1 ]]; then
+    typeset -g __shhac_theme_use_powerline=1
+  else
+    # Fallback to ASCII characters for terminals without Powerline fonts
+    typeset -g __shhac_theme_use_powerline=0
+    __shhac_theme_bubble_left='['
+    __shhac_theme_bubble_right=']'
+  fi
+}
+
 # Initialize git/vcs_info settings once at theme load
 () {
   setopt promptsubst
@@ -203,11 +218,17 @@ __shhac_starship_prompt_git() {
     return
   fi
 
+  # Set branch character based on font support
   local PL_BRANCH_CHAR
-  () {
-    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR=$'\ue0a0'
-  }
+  if (( __shhac_theme_use_powerline )); then
+    () {
+      local LC_ALL="" LC_CTYPE="en_US.UTF-8"
+      PL_BRANCH_CHAR=$'\ue0a0'
+    }
+  else
+    # ASCII fallback for terminals without Powerline fonts
+    PL_BRANCH_CHAR='±'
+  fi
 
   # Single git status call with comprehensive output
   local status_output
