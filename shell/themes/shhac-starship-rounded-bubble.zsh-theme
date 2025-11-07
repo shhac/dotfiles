@@ -27,6 +27,21 @@
   zstyle ':vcs_info:*' actionformats ' %u%c'
 }
 
+# Configuration: Define bubble components and their order
+typeset -ga PROMPT_BUBBLE_1=(time status context path)
+typeset -ga PROMPT_BUBBLE_2=(venv node git)
+
+# Configuration: Map component names to functions
+typeset -gA PROMPT_COMPONENT_FUNCS=(
+  time      __shhac_starship_prompt_time
+  status    __shhac_starship_prompt_status
+  context   __shhac_starship_prompt_context
+  path      __shhac_starship_prompt_dir
+  venv      __shhac_starship_prompt_virtualenv
+  node      __shhac_starship_prompt_node
+  git       __shhac_starship_prompt_git
+)
+
 # Helper: Open bubble
 __shhac_theme_bubble_open() {
   echo -n "%{%k%}%{%F{236}%}$__shhac_theme_bubble_left%{%K{236}%}%{%F{default}%}"
@@ -37,17 +52,29 @@ __shhac_theme_bubble_close() {
   echo -n " %{%k%}%{%F{236}%}$__shhac_theme_bubble_right%{%f%}"
 }
 
-### Prompt components (return both colored and plain text)
+# Helper: Standardized component output setter
+# Sets both colored and plain output in associative arrays
+# Usage: __shhac_starship_set_component_output component_name colored_text plain_text
+__shhac_starship_set_component_output() {
+  local component=$1
+  local colored=$2
+  local plain=$3
+
+  __shhac_starship_component_colored[$component]=$colored
+  __shhac_starship_component_plain[$component]=$plain
+}
+
+### Prompt components (use helper to set output)
 
 # Time
-prompt_time() {
+__shhac_starship_prompt_time() {
   local plain=" ${(%):-%D{%H:%M:%S}}"
   local colored="%{%F{cyan}%}$plain%{%f%}"
-  echo "$colored|$plain"
+  __shhac_starship_set_component_output time "$colored" "$plain"
 }
 
 # Status: errors, root, background jobs
-prompt_status() {
+__shhac_starship_prompt_status() {
   local -a symbols
   local -a plain_symbols
 
@@ -75,27 +102,27 @@ prompt_status() {
   if [[ ${#symbols} -gt 0 ]]; then
     local colored=" ${(j: :)symbols}"
     local plain=" ${(j: :)plain_symbols}"
-    echo "$colored|$plain"
+    __shhac_starship_set_component_output status "$colored" "$plain"
   else
-    echo "|"
+    __shhac_starship_set_component_output status "" ""
   fi
 }
 
 # Context: user@hostname (only shown when relevant)
-prompt_context() {
+__shhac_starship_prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     local plain_user="${(%):-%n}"
     local plain_host="${(%):-%m}"
     local plain=" ${plain_user}@${plain_host}"
     local colored=" %{%F{default}%}%(!.%{%F{yellow}%}.)%n@%m%{%f%}"
-    echo "$colored|$plain"
+    __shhac_starship_set_component_output context "$colored" "$plain"
   else
-    echo "|"
+    __shhac_starship_set_component_output context "" ""
   fi
 }
 
 # Dir: current working directory
-prompt_dir() {
+__shhac_starship_prompt_dir() {
   local path='%(4~|%-1~/…/%2~|%~)'
   local expanded="${(%)path}"
 
@@ -117,40 +144,40 @@ prompt_dir() {
 
   local plain=" $result"
   local colored=" %{%F{blue}%}$result%{%f%}"
-  echo "$colored|$plain"
+  __shhac_starship_set_component_output path "$colored" "$plain"
 }
 
 # Virtualenv
-prompt_virtualenv() {
+__shhac_starship_prompt_virtualenv() {
   local virtualenv_path="$VIRTUAL_ENV"
   if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
     local venv_name="${virtualenv_path:t}"
     local plain=" $venv_name"
     local colored=" %{%F{cyan}%} $venv_name%{%f%}"
-    echo "$colored|$plain"
+    __shhac_starship_set_component_output venv "$colored" "$plain"
   else
-    echo "|"
+    __shhac_starship_set_component_output venv "" ""
   fi
 }
 
 # Node version
-prompt_node() {
+__shhac_starship_prompt_node() {
   local nv
   if [ -x "$(command -v node)" ]; then
     nv="$(node --version | sed -E 's/^v([0-9]+\.[0-9]+).*$/\1/')"
     local plain=" ⬢ $nv"
     local colored=" %{%F{magenta}%}⬢ $nv%{%f%}"
-    echo "$colored|$plain"
+    __shhac_starship_set_component_output node "$colored" "$plain"
   else
-    echo "|"
+    __shhac_starship_set_component_output node "" ""
   fi
 }
 
 # Git - Optimized with single git status call
-prompt_git() {
-  (( $+commands[git] )) || { echo "|"; return; }
+__shhac_starship_prompt_git() {
+  (( $+commands[git] )) || { __shhac_starship_set_component_output git "" ""; return; }
   if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" = 1 ]]; then
-    echo "|"
+    __shhac_starship_set_component_output git "" ""
     return
   fi
 
@@ -163,7 +190,7 @@ prompt_git() {
   # Single git status call with comprehensive output
   local status_output
   status_output=$(git status --porcelain=v2 --branch 2>/dev/null)
-  [[ -z $status_output ]] && { echo "|"; return; }
+  [[ -z $status_output ]] && { __shhac_starship_set_component_output git "" ""; return; }
 
   # Parse status output
   local branch_name=""
@@ -231,7 +258,7 @@ prompt_git() {
 
   local plain=" 󰊢 ${branch}${plain_indicators}${mode}"
   local colored=" ${git_color}󰊢 ${branch}${indicators}${mode}%{%f%}"
-  echo "$colored|$plain"
+  __shhac_starship_set_component_output git "$colored" "$plain"
 }
 
 ## Main prompt
@@ -243,40 +270,38 @@ build_prompt() {
     COLUMNS=${COLUMNS:-80}
   fi
 
-  # Capture components as "colored|plain"
-  local time_data="$(prompt_time)"
-  local status_data="$(prompt_status)"
-  local context_data="$(prompt_context)"
-  local path_data="$(prompt_dir)"
-  local venv_data="$(prompt_virtualenv)"
-  local node_data="$(prompt_node)"
-  local git_data="$(prompt_git)"
+  # Initialize component output storage
+  typeset -gA __shhac_starship_component_colored
+  typeset -gA __shhac_starship_component_plain
 
-  # Extract colored and plain versions
-  local time_colored="${time_data%%|*}"
-  local time_plain="${time_data##*|}"
+  # Collect all components via loop
+  local component
+  for component in ${PROMPT_BUBBLE_1[@]} ${PROMPT_BUBBLE_2[@]}; do
+    local func=${PROMPT_COMPONENT_FUNCS[$component]}
+    if [[ -n $func ]]; then
+      $func
+    fi
+  done
 
-  local status_colored="${status_data%%|*}"
-  local status_plain="${status_data##*|}"
+  # Build bubble 1 content
+  local bubble1_colored=""
+  local bubble1_plain=""
+  for component in ${PROMPT_BUBBLE_1[@]}; do
+    bubble1_colored+="${__shhac_starship_component_colored[$component]}"
+    bubble1_plain+="${__shhac_starship_component_plain[$component]}"
+  done
 
-  local context_colored="${context_data%%|*}"
-  local context_plain="${context_data##*|}"
-
-  local path_colored="${path_data%%|*}"
-  local path_plain="${path_data##*|}"
-
-  local venv_colored="${venv_data%%|*}"
-  local venv_plain="${venv_data##*|}"
-
-  local node_colored="${node_data%%|*}"
-  local node_plain="${node_data##*|}"
-
-  local git_colored="${git_data%%|*}"
-  local git_plain="${git_data##*|}"
+  # Build bubble 2 content
+  local bubble2_colored=""
+  local bubble2_plain=""
+  for component in ${PROMPT_BUBBLE_2[@]}; do
+    bubble2_colored+="${__shhac_starship_component_colored[$component]}"
+    bubble2_plain+="${__shhac_starship_component_plain[$component]}"
+  done
 
   # Calculate FULL line length including all content (visible characters only)
   # Include: ╭─ (2) + bubble_left (1) + all content + bubble_right (1) = 4 extra chars
-  local full_line_plain="╭─${time_plain}${status_plain}${context_plain}${path_plain}${venv_plain}${node_plain}${git_plain} "
+  local full_line_plain="╭─${bubble1_plain}${bubble2_plain} "
   local full_line_length=${#full_line_plain}
   local bubble_chars=2  # bubble left + bubble right
   local buffer=12  # increased buffer for safety with unicode/wide chars
@@ -288,7 +313,7 @@ build_prompt() {
   # Start prompt
   echo -n "%{%F{242}%}╭─"
   __shhac_theme_bubble_open
-  echo -n "${time_colored}${status_colored}${context_colored}${path_colored}"
+  echo -n "${bubble1_colored}"
 
   # Check if we need line wrap
   if [[ $needed_width -gt $COLUMNS ]]; then
@@ -298,7 +323,7 @@ build_prompt() {
   fi
 
   # Continue with remaining content
-  echo -n "${venv_colored}${node_colored}${git_colored}"
+  echo -n "${bubble2_colored}"
   __shhac_theme_bubble_close
 }
 
