@@ -1,19 +1,105 @@
 # vim:ft=zsh ts=2 sw=2 sts=2
 #
-# Starship Curved Theme
-# Modern and sleek with curved edges and nerd font icons
+# Starship Curved Theme for Oh My Zsh
+# =====================================
 #
-# Order: time → error/status → path → venv → node → git
+# A modern zsh theme with curved edges (╭─╸ and ╰─) and intelligent line wrapping.
+# Displays time, status, path, virtualenv, node version, and git information in a
+# clean, information-dense format.
+#
+# Configuration
+# -------------
+# Add these to your .zshrc BEFORE loading Oh My Zsh to customize the theme:
+#
+# Component Visibility (hide specific components):
+#   export SHHAC_THEME_SHOW_TIME=false       # Hide time component
+#   export SHHAC_THEME_SHOW_STATUS=false     # Hide error/root/jobs indicators
+#   export SHHAC_THEME_SHOW_CONTEXT=false    # Hide user@hostname
+#   export SHHAC_THEME_SHOW_PATH=false       # Hide current directory path
+#   export SHHAC_THEME_SHOW_VENV=false       # Hide Python virtualenv
+#   export SHHAC_THEME_SHOW_NODE=false       # Hide Node.js version
+#   export SHHAC_THEME_SHOW_GIT=false        # Hide git information
+#
+# Font Settings:
+#   export SHHAC_THEME_USE_POWERLINE=false   # Use ASCII fallback (g:, n:, v:)
+#                                            # Default: true (assumes Nerd Font available)
+#
+# Requirements
+# ------------
+# - zsh 5.0+
+# - git 2.18+ (recommended for full git features)
+# - Nerd Font or Powerline-patched font (recommended, fallback available)
+#
+# Features
+# --------
+# - Curved edge design (╭─╸ and ╰─)
+# - Git ahead/behind tracking (↑N ↓N)
+# - Signal-decoded error codes (✘→2 for SIGINT)
+# - Configurable component visibility
+# - ASCII fallback for non-Powerline terminals
+#
+# Display Order: time → error/status → path → venv → node → git
+#
+
+# User Configuration: Control component visibility
+# Set to false in your .zshrc before theme loads to hide components
+: ${SHHAC_THEME_SHOW_TIME:=true}
+: ${SHHAC_THEME_SHOW_STATUS:=true}
+: ${SHHAC_THEME_SHOW_CONTEXT:=true}
+: ${SHHAC_THEME_SHOW_PATH:=true}
+: ${SHHAC_THEME_SHOW_VENV:=true}
+: ${SHHAC_THEME_SHOW_NODE:=true}
+: ${SHHAC_THEME_SHOW_GIT:=true}
+
+# User-configurable Powerline/Nerd Font support
+# Set SHHAC_THEME_USE_POWERLINE=false in your .zshrc to disable
+() {
+  if [[ "${SHHAC_THEME_USE_POWERLINE:-true}" == "false" ]]; then
+    typeset -g __shhac_theme_use_powerline=0
+    typeset -g __shhac_theme_git_icon='g:'
+    typeset -g __shhac_theme_node_icon='n:'
+    typeset -g __shhac_theme_venv_icon='v:'
+  else
+    typeset -g __shhac_theme_use_powerline=1
+    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
+    typeset -g __shhac_theme_git_icon='󰊢'
+    typeset -g __shhac_theme_node_icon='⬢'
+    typeset -g __shhac_theme_venv_icon=''
+  fi
+}
+
+# Initialize git/vcs_info settings once at theme load
+() {
+  setopt promptsubst
+  autoload -Uz vcs_info
+
+  zstyle ':vcs_info:*' enable git
+  zstyle ':vcs_info:*' get-revision true
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' stagedstr '✚'
+  zstyle ':vcs_info:*' unstagedstr '●'
+  zstyle ':vcs_info:*' formats ' %u%c'
+  zstyle ':vcs_info:*' actionformats ' %u%c'
+
+  # Cache command existence
+  typeset -g __shhac_has_git __shhac_has_node
+  (( $+commands[git] )) && __shhac_has_git=1 || __shhac_has_git=0
+  (( $+commands[node] )) && __shhac_has_node=1 || __shhac_has_node=0
+}
 
 ### Prompt components
 
 # Time
 prompt_time() {
-  echo -n "%{%F{cyan}%} %*"
+  [[ "$SHHAC_THEME_SHOW_TIME" != "true" ]] && return
+  local time_fmt="%D{%H:%M:%S}"
+  local time_str="${(%)time_fmt}"
+  echo -n "%{%F{cyan}%} $time_str"
 }
 
 # Status: errors, root, background jobs
 prompt_status() {
+  [[ "$SHHAC_THEME_SHOW_STATUS" != "true" ]] && return
   local -a symbols
 
   if [[ $RETVAL -ne 0 ]]; then
@@ -26,13 +112,14 @@ prompt_status() {
     fi
   fi
   [[ $UID -eq 0 ]] && symbols+=" %{%F{yellow}%}⚡"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+=" %{%F{cyan}%}⚙"
+  [[ ${#jobtexts} -gt 0 ]] && symbols+=" %{%F{cyan}%}⚙"
 
   [[ -n "$symbols" ]] && echo -n "$symbols"
 }
 
 # Context: user@hostname (only shown when relevant)
 prompt_context() {
+  [[ "$SHHAC_THEME_SHOW_CONTEXT" != "true" ]] && return
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     echo -n " %{%F{default}%}%(!.%{%F{yellow}%}.)%n@%m"
   fi
@@ -40,17 +127,18 @@ prompt_context() {
 
 # Dir: current working directory
 prompt_dir() {
+  [[ "$SHHAC_THEME_SHOW_PATH" != "true" ]] && return
   local path='%(4~|%-1~/…/%2~|%~)'
   local expanded="${(%)path}"
 
-  # Truncate each directory component to 16 chars
+  # Truncate each directory component to 24 chars
   local -a parts
   parts=("${(@s:/:)expanded}")
   local result=""
 
   for part in $parts; do
-    if [[ ${#part} -gt 16 ]]; then
-      part="${part:0:15}…"
+    if [[ ${#part} -gt 24 ]]; then
+      part="${part:0:23}…"
     fi
     if [[ -n $result ]]; then
       result="${result}/${part}"
@@ -64,45 +152,100 @@ prompt_dir() {
 
 # Virtualenv
 prompt_virtualenv() {
+  [[ "$SHHAC_THEME_SHOW_VENV" != "true" ]] && return
   local virtualenv_path="$VIRTUAL_ENV"
   if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
-    echo -n " %{%F{cyan}%} $(basename $virtualenv_path)"
+    local venv_name="${virtualenv_path:t}"
+    echo -n " %{%F{cyan}%}$__shhac_theme_venv_icon $venv_name"
   fi
 }
 
 # Node version
 prompt_node() {
-  local nv
-  if [ -x "$(command -v node)" ]; then
-    nv="$(node --version | sed -E 's/^v([0-9]+\.[0-9]+).*$/\1/')"
-    echo -n " %{%F{magenta}%}⬢ $nv"
+  [[ "$SHHAC_THEME_SHOW_NODE" != "true" ]] && return
+  if (( __shhac_has_node )); then
+    local nv
+    nv="$(node --version 2>/dev/null)" || return
+
+    # Extract major.minor version using native zsh parameter expansion
+    nv="${nv#v}"              # Remove leading 'v'
+    local major="${nv%%.*}"   # Get major version
+    local rest="${nv#*.}"     # Remove major and first dot
+    local minor="${rest%%.*}" # Get minor version
+    nv="${major}.${minor}"    # Combine major.minor
+
+    echo -n " %{%F{magenta}%}$__shhac_theme_node_icon $nv"
   fi
 }
 
-# Git
+# Git - Optimized with single git status call
 prompt_git() {
-  (( $+commands[git] )) || return
+  [[ "$SHHAC_THEME_SHOW_GIT" != "true" ]] && return
+  (( __shhac_has_git )) || return
   if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" = 1 ]]; then
     return
   fi
+
+  # Set branch character based on font support
   local PL_BRANCH_CHAR
-  () {
-    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR=$'\ue0a0'
-  }
-  local ref dirty mode repo_path git_color
+  if (( __shhac_theme_use_powerline )); then
+    () {
+      local LC_ALL="" LC_CTYPE="en_US.UTF-8"
+      PL_BRANCH_CHAR=$'\ue0a0'
+    }
+  else
+    # ASCII fallback for terminals without Powerline fonts
+    PL_BRANCH_CHAR='±'
+  fi
 
-  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    repo_path=$(git rev-parse --git-dir 2>/dev/null)
-    dirty=$(parse_git_dirty)
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
+  # Single git status call with comprehensive output
+  local status_output
+  status_output=$(git status --porcelain=v2 --branch 2>/dev/null)
+  [[ -z $status_output ]] && return
 
-    if [[ -n $dirty ]]; then
-      git_color="%{%F{yellow}%}"
-    else
-      git_color="%{%F{green}%}"
-    fi
+  # Parse status output
+  local branch_name=""
+  local has_staged=0
+  local has_unstaged=0
+  local is_detached=0
+  local ahead=0
+  local behind=0
+  local has_upstream=0
 
+  while IFS= read -r line; do
+    case $line in
+      "# branch.head "*)
+        branch_name="${line#\# branch.head }"
+        [[ $branch_name == "(detached)" ]] && is_detached=1
+        ;;
+      "# branch.ab "*)
+        has_upstream=1
+        local ab="${line#\# branch.ab }"
+        ahead="${ab% *}"
+        behind="${ab#* }"
+        ;;
+      "1 "* | "2 "*)
+        # Ordinary changed entries (XY submodule mH mI mW hH hI path)
+        local xy="${line:2:2}"
+        [[ $xy[1] != "." ]] && has_staged=1
+        [[ $xy[2] != "." ]] && has_unstaged=1
+        ;;
+      "? "*)
+        # Untracked files
+        [[ "${DISABLE_UNTRACKED_FILES_DIRTY:-}" != "true" ]] && has_unstaged=1
+        ;;
+    esac
+  done <<< "$status_output"
+
+  # Handle detached HEAD - get short SHA
+  if [[ $is_detached -eq 1 ]]; then
+    branch_name="➦ $(git rev-parse --short HEAD 2>/dev/null)"
+  fi
+
+  # Check for special modes
+  local mode=""
+  local repo_path=$(git rev-parse --git-dir 2>/dev/null)
+  if [[ -n $repo_path ]]; then
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
       mode=" <B>"
     elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
@@ -110,24 +253,39 @@ prompt_git() {
     elif [[ -e "${repo_path}/rebase" || -e "${repo_path}/rebase-apply" || -e "${repo_path}/rebase-merge" || -e "${repo_path}/../.dotest" ]]; then
       mode=" >R>"
     fi
-
-    setopt promptsubst
-    autoload -Uz vcs_info
-
-    zstyle ':vcs_info:*' enable git
-    zstyle ':vcs_info:*' get-revision true
-    zstyle ':vcs_info:*' check-for-changes true
-    zstyle ':vcs_info:*' stagedstr '✚'
-    zstyle ':vcs_info:*' unstagedstr '●'
-    zstyle ':vcs_info:*' formats ' %u%c'
-    zstyle ':vcs_info:*' actionformats ' %u%c'
-    vcs_info
-    local branch="${ref/refs\/heads\//$PL_BRANCH_CHAR }"
-    if [[ ${#branch} -gt 17 ]]; then
-      branch="${branch:0:16}…"
-    fi
-    echo -n " ${git_color}󰊢 ${branch}${vcs_info_msg_0_%% }${mode}"
   fi
+
+  # Determine color based on dirty status
+  local git_color
+  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+    git_color="%{%F{yellow}%}"
+  else
+    git_color="%{%F{green}%}"
+  fi
+
+  # Build indicators with format: change indicator (±) followed by tracking indicators
+  local indicators=""
+  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+    indicators="±"
+  fi
+
+  # Add tracking indicators
+  if [[ $has_upstream -eq 0 && $is_detached -eq 0 ]]; then
+    indicators+=" ⚠"
+  else
+    [[ $ahead -gt 0 ]] && indicators+=" ↑$ahead"
+    [[ $behind -gt 0 ]] && indicators+=" ↓$behind"
+  fi
+
+  [[ -n $indicators ]] && indicators=" $indicators"
+
+  # Format branch name
+  local branch="${PL_BRANCH_CHAR} ${branch_name}"
+  if [[ ${#branch} -gt 30 ]]; then
+    branch="${branch:0:29}…"
+  fi
+
+  echo -n " ${git_color}$__shhac_theme_git_icon ${branch}${indicators}${mode}"
 }
 
 ## Main prompt
