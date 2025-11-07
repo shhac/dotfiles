@@ -301,6 +301,7 @@ __shhac_starship_prompt_git() {
   local is_detached=0
   local ahead=0
   local behind=0
+  local has_upstream=0
 
   while IFS= read -r line; do
     case $line in
@@ -309,6 +310,7 @@ __shhac_starship_prompt_git() {
         [[ $branch_name == "(detached)" ]] && is_detached=1
         ;;
       "# branch.ab "*)
+        has_upstream=1
         local ab="${line#\# branch.ab }"
         ahead="${ab% *}"
         behind="${ab#* }"
@@ -352,13 +354,26 @@ __shhac_starship_prompt_git() {
     git_color="%{%F{green}%}"
   fi
 
-  # Build indicators
-  local indicators=""
-  local plain_indicators=""
-  [[ $has_staged -eq 1 ]] && indicators+="✚" && plain_indicators+="✚"
-  [[ $has_unstaged -eq 1 ]] && indicators+="●" && plain_indicators+="●"
-  [[ $ahead -gt 0 ]] && indicators+="↑$ahead" && plain_indicators+="↑$ahead"
-  [[ $behind -gt 0 ]] && indicators+="↓$behind" && plain_indicators+="↓$behind"
+  # Build indicators with new format: change indicator (±) followed by tracking indicators
+  local change_indicator=""
+  local change_plain=""
+  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+    change_indicator="±"
+    change_plain="±"
+  fi
+
+  local tracking_indicator=""
+  local tracking_plain=""
+  if [[ $has_upstream -eq 0 && $is_detached -eq 0 ]]; then
+    tracking_indicator=" ⚠"
+    tracking_plain=" ⚠"
+  else
+    [[ $ahead -gt 0 ]] && tracking_indicator+=" ↑$ahead" && tracking_plain+=" ↑$ahead"
+    [[ $behind -gt 0 ]] && tracking_indicator+=" ↓$behind" && tracking_plain+=" ↓$behind"
+  fi
+
+  local indicators="${change_indicator}${tracking_indicator}"
+  local plain_indicators="${change_plain}${tracking_plain}"
   [[ -n $indicators ]] && indicators=" $indicators" && plain_indicators=" $plain_indicators"
 
   # Format branch name
