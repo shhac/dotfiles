@@ -23,18 +23,18 @@
 : ${SHHAC_THEME_SHOW_NODE:=true}
 : ${SHHAC_THEME_SHOW_GIT:=true}
 
-# Detect Powerline/Nerd Font support and set fallback mode
+# User-configurable Powerline/Nerd Font support
+# Set SHHAC_THEME_USE_POWERLINE=false in your .zshrc to disable
 () {
-  # Test if Powerline font characters render correctly
-  # If the bubble character is multi-byte when it should be single-width,
-  # the font doesn't support Powerline glyphs
-  if [[ $(echo -n "$__shhac_theme_bubble_left" | wc -m) -eq 1 ]]; then
-    typeset -g __shhac_theme_use_powerline=1
-  else
-    # Fallback to ASCII characters for terminals without Powerline fonts
+  if [[ "${SHHAC_THEME_USE_POWERLINE:-true}" == "false" ]]; then
     typeset -g __shhac_theme_use_powerline=0
     __shhac_theme_bubble_left='['
     __shhac_theme_bubble_right=']'
+  else
+    typeset -g __shhac_theme_use_powerline=1
+    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
+    __shhac_theme_bubble_left=$'\ue0b6'
+    __shhac_theme_bubble_right=$'\ue0b4'
   fi
 }
 
