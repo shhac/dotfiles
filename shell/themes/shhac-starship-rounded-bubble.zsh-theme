@@ -1,10 +1,46 @@
 # vim:ft=zsh ts=2 sw=2 sts=2
 #
-# Starship Rounded Bubble Theme
-# Rounded bubble with subtle background color and smooth edges
-# Intelligently wraps to multiple lines when terminal is narrow
+# Starship Rounded Bubble Theme for Oh My Zsh
+# ============================================
 #
-# Order: time → error/status → path → venv → node → git
+# A modern zsh theme with speech-bubble style prompt, rounded Powerline edges,
+# and intelligent line wrapping. Displays time, status, path, virtualenv, node
+# version, and git information in a clean, information-dense format.
+#
+# Configuration
+# -------------
+# Add these to your .zshrc BEFORE loading Oh My Zsh to customize the theme:
+#
+# Component Visibility (hide specific components):
+#   export SHHAC_THEME_SHOW_TIME=false       # Hide time component
+#   export SHHAC_THEME_SHOW_STATUS=false     # Hide error/root/jobs indicators
+#   export SHHAC_THEME_SHOW_CONTEXT=false    # Hide user@hostname
+#   export SHHAC_THEME_SHOW_PATH=false       # Hide current directory path
+#   export SHHAC_THEME_SHOW_VENV=false       # Hide Python virtualenv
+#   export SHHAC_THEME_SHOW_NODE=false       # Hide Node.js version
+#   export SHHAC_THEME_SHOW_GIT=false        # Hide git information
+#
+# Font Settings:
+#   export SHHAC_THEME_USE_POWERLINE=false   # Use ASCII fallback ([ ], g:, n:, v:)
+#                                            # Default: true (assumes Nerd Font available)
+#
+# Requirements
+# ------------
+# - zsh 5.0+
+# - git 2.18+ (recommended for full git features)
+# - Nerd Font or Powerline-patched font (recommended, fallback available)
+#
+# Features
+# --------
+# - Rounded bubble design with background color
+# - Intelligent wrapping when terminal is narrow
+# - Git ahead/behind tracking (↑N ↓N)
+# - Signal-decoded error codes (✘→2 for SIGINT)
+# - Configurable component visibility
+# - ASCII fallback for non-Powerline terminals
+#
+# Display Order: time → error/status → path → venv → node → git
+#
 
 # Powerline rounded separators
 () {
