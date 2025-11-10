@@ -246,7 +246,8 @@ __shhac_starship_prompt_virtualenv() {
 # Node version
 __shhac_starship_prompt_node() {
   [[ "$SHHAC_THEME_SHOW_NODE" != "true" ]] && { __shhac_starship_set_component_output node "" ""; return; }
-  if (( __shhac_has_node )); then
+  # Check command -v directly to support nvm which loads after theme initialization
+  if command -v node >/dev/null 2>&1; then
     local nv
     nv="$(node --version 2>/dev/null)" || {
       __shhac_starship_set_component_output node "" ""
@@ -354,12 +355,21 @@ __shhac_starship_prompt_git() {
     git_color="%{%F{green}%}"
   fi
 
-  # Build indicators with new format: change indicator (±) followed by tracking indicators
+  # Build indicators with new format: change indicator followed by tracking indicators
   local change_indicator=""
   local change_plain=""
-  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+  if [[ $has_staged -eq 1 && $has_unstaged -eq 1 ]]; then
+    # Both staged and unstaged changes
     change_indicator="±"
     change_plain="±"
+  elif [[ $has_staged -eq 1 ]]; then
+    # Only staged changes
+    change_indicator="+"
+    change_plain="+"
+  elif [[ $has_unstaged -eq 1 ]]; then
+    # Only unstaged changes
+    change_indicator="●"
+    change_plain="●"
   fi
 
   local tracking_indicator=""
