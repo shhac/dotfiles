@@ -201,7 +201,7 @@ prompt_virtualenv() {
 # Node version (magenta/pink)
 prompt_node() {
   [[ "$SHHAC_THEME_SHOW_NODE" != "true" ]] && return
-  if (( __shhac_has_node )); then
+  if command -v node >/dev/null 2>&1; then
     local nv
     nv="$(node --version 2>/dev/null)" || return
 
@@ -289,10 +289,14 @@ prompt_git() {
     bg_color=040  # green
   fi
 
-  # Build indicators: change indicator (±) followed by tracking indicators
+  # Build indicators: change indicator (±/+/●) followed by tracking indicators
   local indicators=""
-  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+  if [[ $has_staged -eq 1 && $has_unstaged -eq 1 ]]; then
     indicators="±"
+  elif [[ $has_staged -eq 1 ]]; then
+    indicators="+"
+  elif [[ $has_unstaged -eq 1 ]]; then
+    indicators="●"
   fi
 
   if [[ $has_upstream -eq 0 && $is_detached -eq 0 ]]; then

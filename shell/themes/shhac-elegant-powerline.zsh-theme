@@ -197,7 +197,8 @@ prompt_virtualenv() {
 # Node version
 prompt_node() {
   [[ "$SHHAC_THEME_SHOW_NODE" != "true" ]] && return
-  if (( __shhac_has_node )); then
+  # Check command -v directly to support nvm which loads after theme initialization
+  if command -v node >/dev/null 2>&1; then
     local nv
     nv="$(node --version 2>/dev/null)" || return
 
@@ -296,10 +297,17 @@ prompt_git() {
     prompt_segment green $CURRENT_FG
   fi
 
-  # Build indicators with new format: change indicator (±) followed by tracking indicators
+  # Build indicators with new format: change indicator (±/+/●) followed by tracking indicators
   local indicators=""
-  if [[ $has_staged -eq 1 || $has_unstaged -eq 1 ]]; then
+  if [[ $has_staged -eq 1 && $has_unstaged -eq 1 ]]; then
+    # Both staged and unstaged changes
     indicators="±"
+  elif [[ $has_staged -eq 1 ]]; then
+    # Only staged changes
+    indicators="+"
+  elif [[ $has_unstaged -eq 1 ]]; then
+    # Only unstaged changes
+    indicators="●"
   fi
 
   local tracking_indicator=""
