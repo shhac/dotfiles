@@ -315,6 +315,9 @@ __shhac_starship_prompt_git() {
         local ab="${line#\# branch.ab }"
         ahead="${ab% *}"
         behind="${ab#* }"
+        # Strip leading + and - signs from ahead/behind counts
+        ahead="${ahead#+}"
+        behind="${behind#-}"
         ;;
       "1 "* | "2 "*)
         # Ordinary changed entries (XY submodule mH mI mW hH hI path)
