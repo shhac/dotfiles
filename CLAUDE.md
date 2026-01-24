@@ -22,7 +22,7 @@ This is a personal dotfiles repository containing shell configurations, git alia
 
 ### Shell Configuration (`shell/`)
 - **Zsh extensions** - Custom functions and aliases in `shell/conf.d/`
-- **Theme** - Custom zsh theme at `shell/themes/ataganoster.zsh-theme`
+- **Themes** - Custom zsh themes in `shell/themes/` including `shhac-starship-rounded-bubble` (default), `ataganoster`, and various styled variants (cyberpunk, neon-glow, minimal-zen, etc.)
 - **Oh My Zsh integration** - Automated installation with plugin configuration
 - **Font installation** - Programming fonts with Nerd Font support
 - **Interactive setup** - Choose which shell components to install
