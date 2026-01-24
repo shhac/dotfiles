@@ -42,6 +42,9 @@
 # Display Order: time → error/status → path → venv → node → git
 #
 
+# Ensure venv prompt is handled by this theme, not Python's default
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
 # Powerline rounded separators
 () {
   local LC_ALL="" LC_CTYPE="en_US.UTF-8"
@@ -76,7 +79,7 @@
     __shhac_theme_bubble_right=$'\ue0b4'
     typeset -g __shhac_theme_git_icon='󰊢'
     typeset -g __shhac_theme_node_icon='⬢'
-    typeset -g __shhac_theme_venv_icon=''
+    typeset -g __shhac_theme_venv_icon=$'\ue73c'
   fi
 }
 

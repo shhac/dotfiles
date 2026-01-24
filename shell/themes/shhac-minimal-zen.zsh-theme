@@ -42,6 +42,9 @@
 # Display Order: time → error/status → path → venv → node → git
 #
 
+# Ensure venv prompt is handled by this theme, not Python's default
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
 # User Configuration: Control component visibility
 # Set to false in your .zshrc before theme loads to hide components
 : ${SHHAC_THEME_SHOW_TIME:=true}
@@ -65,7 +68,7 @@
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
     typeset -g __shhac_theme_git_icon='󰊢'
     typeset -g __shhac_theme_node_icon='⬢'
-    typeset -g __shhac_theme_venv_icon=''
+    typeset -g __shhac_theme_venv_icon=$'\ue73c'
   fi
 }
 
