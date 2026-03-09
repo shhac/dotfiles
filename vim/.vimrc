@@ -6,6 +6,7 @@ set bs=2
 
 " Enable Line Numbers
 set number
+set shiftwidth=2
 
 " Save your backups to a less annoying place than the current directory.
 " If you have .vim-backup in the current directory, it'll use that.
