@@ -170,8 +170,27 @@ done
 
 info "Phase 5: Machine-specific configuration"
 
-# .gitconfig.local
-if [ ! -f "$HOME/.gitconfig.local" ]; then
+# Helper: if a backup exists for a file that now has a .local counterpart,
+# use the backup as the .local file so nothing breaks on first run.
+promote_backup_to_local() {
+  local local_file="$1"
+  local backup_file="$2"
+
+  if [ -f "$local_file" ]; then
+    return 0
+  fi
+
+  if [ -f "$backup_file" ]; then
+    cp "$backup_file" "$local_file"
+    success "Migrated $(basename "$backup_file") → $(basename "$local_file")"
+    return 0
+  fi
+
+  return 1
+}
+
+# .gitconfig.local — try backup first, then prompt
+if ! promote_backup_to_local "$HOME/.gitconfig.local" "$BACKUP_DIR/.gitconfig"; then
   if [ "$INTERACTIVE" = "true" ]; then
     info "Setting up git user identity..."
     echo -n "Git name: " && read -r git_name
@@ -196,9 +215,8 @@ GITLOCAL
   fi
 fi
 
-# .ssh/config.local
-if [ ! -f "$HOME/.ssh/config.local" ]; then
-  info "Creating ~/.ssh/config.local with default SSH settings..."
+# .ssh/config.local — try backup first, then template
+if ! promote_backup_to_local "$HOME/.ssh/config.local" "$BACKUP_DIR/.ssh/config"; then
   cat > "$HOME/.ssh/config.local" << 'SSHLOCAL'
 # Machine-specific SSH hosts
 # Add your hosts here, e.g.:
@@ -209,11 +227,11 @@ if [ ! -f "$HOME/.ssh/config.local" ]; then
 #   IdentityFile ~/.ssh/id_ed25519
 SSHLOCAL
   chmod 644 "$HOME/.ssh/config.local"
-  success "Created ~/.ssh/config.local"
+  success "Created ~/.ssh/config.local (template)"
 fi
 
-# .zshrc.local
-if [ ! -f "$HOME/.zshrc.local" ]; then
+# .zshrc.local — try backup first, then template
+if ! promote_backup_to_local "$HOME/.zshrc.local" "$BACKUP_DIR/.zshrc"; then
   cat > "$HOME/.zshrc.local" << 'ZSHLOCAL'
 # Machine-specific shell configuration
 # This file is sourced at the end of ~/.zshrc
@@ -224,7 +242,7 @@ if [ ! -f "$HOME/.zshrc.local" ]; then
 # Example: Source additional tools
 # . "$HOME/.local/bin/env"
 ZSHLOCAL
-  success "Created ~/.zshrc.local"
+  success "Created ~/.zshrc.local (template)"
 fi
 
 # ─── Phase 6: System Preferences (opt-in) ─────────────────────────────────────
