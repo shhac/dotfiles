@@ -171,8 +171,8 @@ if [[ "$PKG_MANAGER" == "apt" ]] && prompt_yes_no "Install Node.js LTS? (JavaScr
         
         # Set up npm global directory configuration
         export DOTFILES_SETUP=1
-        if [ -f "$SCRIPT_DIR/../shell/conf.d/npm.sh" ]; then
-            source "$SCRIPT_DIR/../shell/conf.d/npm.sh"
+        if [ -f "$SCRIPT_DIR/../shell/.zsh/conf.d/npm.sh" ]; then
+            source "$SCRIPT_DIR/../shell/.zsh/conf.d/npm.sh"
         fi
         unset DOTFILES_SETUP
     else

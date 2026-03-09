@@ -1,0 +1,37 @@
+# Machine-specific overrides (.local file pattern)
+*.local
+.local/
+
+# Decrypted secrets (age encryption)
+# Add specific decrypted filenames here if using age:
+# id_ed25519
+# id_ed25519.pub
+
+# Secrets & keys
+id_*
+*.key
+*.pem
+*.p12
+*.pfx
+private-keys-v1.d/
+*.kbx
+trustdb.gpg
+openpgp-revocs.d/
+secring.gpg
+S.gpg-agent*
+.npmrc
+.netrc
+.env*
+known_hosts*
+authorized_keys
+random_seed
+credentials
+
+# Backups
+.dotfiles-backup/
+
+# OS artifacts
+.DS_Store
+
+# AI cache
+.ai-cache/

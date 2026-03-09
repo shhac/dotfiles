@@ -1,0 +1,13 @@
+\.git
+\.github
+\.claude
+\.ai-cache
+README\.md
+CLAUDE\.md
+LICENSE
+setup\.sh
+os-.*
+lib
+Brewfile
+\.gitignore
+\.stow-local-ignore

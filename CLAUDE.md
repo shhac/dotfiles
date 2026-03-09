@@ -1,132 +1,91 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-This is a personal dotfiles repository containing shell configurations, git aliases, and cross-platform system setup scripts for development environments. The repository supports macOS, Linux, and WSL2 with interactive setup scripts that allow users to choose which components to install. The repository is organized into platform-specific directories with setup scripts that configure development tools and shell environments.
+Personal dotfiles repository managed with **GNU Stow**. Each top-level directory is a stow package that mirrors `$HOME` — stow creates symlinks from the package contents into the home directory. Supports macOS, Linux, and WSL2.
 
-## Key Components
+## Repository Structure
 
-### Core Utilities (`lib/`)
-- **Shared functions** - Common utilities in `lib/utils.sh` for consistent experience across all scripts
-- **Interactive prompts** - `prompt_yes_no()`, `prompt_choice()` for user-friendly setup
-- **Consistent messaging** - `success()`, `info()`, `warning()`, `error_exit()` functions
-- **Utility helpers** - `command_exists()`, `is_root()`, `get_script_dir()`
-
-### Git Configuration (`git/`)
-- **Git aliases** - Extensive set of git aliases configured via `git/aliases.sh`
-- **Branch cleanup** - `git merged-remote-view/clean`, `git deleted-remote-view/clean`
-- **Custom commit function** - `gm` function for conventional commits with format `type[scope]: message`
-- **Interactive setup** - Prompts for aliases, push/pull settings, user config, diff tools
-
-### Shell Configuration (`shell/`)
-- **Zsh extensions** - Custom functions and aliases in `shell/conf.d/`
-- **Themes** - Custom zsh themes in `shell/themes/` including `shhac-starship-rounded-bubble` (default), `ataganoster`, and various styled variants (cyberpunk, neon-glow, minimal-zen, etc.)
-- **Oh My Zsh integration** - Automated installation with plugin configuration
-- **Font installation** - Programming fonts with Nerd Font support
-- **Interactive setup** - Choose which shell components to install
-
-### Platform-Specific Setup
-#### macOS (`mac/`)
-- **System configuration** - macOS settings and Homebrew package installation
-- **Development tools** - Node.js (via NVM), Python, Visual Studio Code setup
-- **Package management** - Homebrew with modern CLI tools (exa, bat, fd, ripgrep, tealdeer)
-- **iTerm2 profiles** - Terminal configuration with color schemes
-
-#### Linux (`linux/`)
-- **Multi-distro support** - Works with apt, yum, dnf, pacman package managers
-- **Development environment** - Essential build tools, git, vim, zsh
-- **Modern CLI tools** - exa, bat, fd, ripgrep installation where available
-- **Runtime environments** - Node.js LTS, Python 3, development packages
-
-#### WSL2 (`wsl2/`)
-- **Shared Linux base** - Builds on Linux setup for consistency
-- **Docker integration** - Docker and Docker Compose with user permissions
-- **Windows interoperability** - Selective PATH integration, Windows tool aliases
-- **X11 forwarding** - GUI application support with VcXsrv/X410/WSLg
-- **git-delta** - Enhanced git diff with syntax highlighting
-
-### Vim Configuration (`vim/`)
-- **Basic setup** - Sensible defaults with syntax highlighting
-- **Cross-platform** - Works consistently across all supported platforms
-
-### Ghostty Terminal (`ghostty/`)
-- **Modern terminal** - Fast GPU-accelerated terminal emulator written in Zig
-- **Configuration** - Custom themes (Catppuccin Mocha), fonts (Fira Code), and keybindings
-- **Cross-platform** - Supports macOS and Linux with consistent configuration
-- **Setup script** - Installs configuration to `~/.config/ghostty/config`
-
-## Setup Commands
-
-### Initial Setup
-```bash
-# Clone repository first
-git clone https://github.com/shhac/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-
-# Make scripts executable  
-chmod +x setup.sh */setup.sh
-
-# Interactive setup (recommended - prompts for each component)
-./setup.sh
-
-# Non-interactive setup (auto-yes to all prompts)
-./setup.sh --yes
-
-# Individual components (also interactive)
-./mac/setup.sh      # macOS setup
-./shell/setup.sh    # Shell configuration
-./git/setup.sh      # Git configuration
-./vim/setup.sh      # Vim configuration
-./ghostty/setup.sh  # Ghostty terminal configuration
-./linux/setup.sh    # Linux setup
-./wsl2/setup.sh     # WSL2 setup
+```
+dotfiles/
+├── setup.sh              # Entry point: detects OS, delegates to os-*/setup.sh
+├── Brewfile              # Declarative Homebrew packages, casks, and apps
+├── .gitignore            # Ignores secrets, .local files, OS artifacts
+├── .stow-local-ignore    # Prevents stow from linking repo management files
+│
+├── # Stow packages (each mirrors $HOME)
+├── shell/                # .zshrc, .zprofile, .zsh/conf.d/*, .zsh/themes/*
+├── git/                  # .gitconfig, .gitignore_global
+├── vim/                  # .vimrc
+├── nvim/                 # .config/nvim/init.vim
+├── ghostty/              # .config/ghostty/config
+├── tmux/                 # .tmux.conf
+├── ssh/                  # .ssh/config (includes .ssh/config.local)
+├── gpg/                  # .gnupg/gpg-agent.conf
+│
+├── # OS-specific (NOT stow packages)
+├── os-macos/             # setup.sh, defaults.sh, iterm2-profiles/
+├── os-linux/             # setup.sh
+├── os-wsl2/              # setup.sh, wsl-interop.sh, wsl2-aliases.sh, x11-setup.sh
+│
+└── lib/                  # Shared utilities (utils.sh)
 ```
 
-### Git Commit Function
-The `gm` function provides structured commits:
+## Key Patterns
+
+### Stow Symlinks
+- `stow --no-folding -t $HOME <package>` creates file-level symlinks (never directory-level)
+- Changes to symlinked files are changes to the repo — no copy/sync step needed
+- OS-specific overrides: if `os-macos/<package>/` exists, it's stowed instead of the common package
+
+### .local File Pattern
+All tracked configs source/include a gitignored `.local` counterpart for machine-specific overrides:
+- `.zshrc` → sources `~/.zshrc.local`
+- `.gitconfig` → `[include] path = ~/.gitconfig.local`
+- `.ssh/config` → `Include ~/.ssh/config.local`
+
+### Shell Configuration
+- **Oh My Zsh** with `ZSH_CUSTOM=~/.zsh` (stow links `shell/.zsh/` → `~/.zsh/`)
+- **conf.d pattern**: All shell extensions in `shell/.zsh/conf.d/*.sh`, auto-sourced by `.zshrc`
+- **Themes** in `shell/.zsh/themes/`, default: `shhac-starship-rounded-bubble`
+- **Plugins**: `git`, `git-open`
+
+### Git Configuration
+- All aliases defined directly in `git/.gitconfig` (not via `git config --global` commands)
+- User identity, signing key, and `[includeIf]` blocks go in `~/.gitconfig.local`
+- `gm` function in `shell/.zsh/conf.d/git.sh` for conventional commits: `gm feat api "message"`
+
+## Setup Flow (macOS)
+
+`setup.sh` → `os-macos/setup.sh`:
+1. Xcode CLT + Homebrew
+2. `brew bundle install` from Brewfile
+3. Oh My Zsh, NVM, TPM (tmux plugin manager)
+4. Stow all packages (with backup of conflicting files)
+5. Create machine-specific `.local` files interactively
+6. Optional macOS defaults
+7. Set default shell to brew's zsh
+
+## Useful Commands
+
 ```bash
-gm feat api "add user authentication"    # feat[api]: add user authentication
-gm fix - "resolve login issue"           # fix: resolve login issue
-gm chore deps "update package versions"  # chore[deps]: update package versions
+# Setup
+./setup.sh              # Full setup
+./setup.sh --yes        # Non-interactive
+
+# Manual stow operations
+stow --no-folding -t $HOME shell    # Stow a single package
+stow -D -t $HOME shell              # Unstow a package
+
+# Update Brewfile
+brew bundle dump --force --describe --file=Brewfile
 ```
-
-### Useful Git Aliases
-- `git sw` - switch branches
-- `git swc` - switch and create branch  
-- `git st` - status with short format
-- `git lg` - pretty log with graph
-- `git please` - force push with lease
-- `git commend` - amend without editing message
-- `git merged-remote-view` - view merged remote branches
-- `git merged-remote-clean` - delete merged remote branches
-- `git deleted-remote-view` - view deleted remote branches (dry-run)
-- `git deleted-remote-clean` - clean up deleted remote branch refs
-
-### Interactive Setup Features
-- **Component selection** - Choose which parts to install (git, shell, vim, platform-specific)
-- **Graceful skipping** - Skip any component without breaking the setup
-- **Non-interactive mode** - Use `--yes` flag for automation and CI/CD
-- **Platform detection** - Automatically detects macOS, Linux, or WSL2
-- **Consistent experience** - Same interactive prompts across all scripts
-- **Fallback mechanisms** - Scripts work even if shared utilities aren't available
-
-## Architecture Notes
-
-- **Modular design** - Each platform/tool has its own directory with setup scripts
-- **Interactive prompts** - All scripts support user-friendly prompts with graceful skipping
-- **Shared utilities** - Common functions in `lib/utils.sh` for consistent experience across all scripts
-- **Cross-platform support** - Native support for macOS, Linux (apt/yum/dnf/pacman), and WSL2
-- **Local installation** - Setup scripts use local configuration files for reliable, offline-capable setup
-- **Shell integration** - All custom functions/aliases loaded via `shell/conf.d/` directory
-- **Git-centric workflow** - Extensive git aliases and utilities for branch/commit management
-- **Package manager detection** - Automatically detects and uses appropriate package manager
-- **Runtime environment setup** - Node.js via NVM on macOS, NodeSource on Linux, Python 3 across platforms
 
 ## Development Notes
 
-- No build process - pure shell scripts and configuration files
-- Changes tested by running setup scripts in isolated environments
-- Git configuration applied globally via `git config --global`
-- Shell functions sourced automatically through zsh configuration
+- No build process — pure shell scripts and config files
+- `lib/utils.sh` provides `success()`, `info()`, `warning()`, `error_exit()`, `prompt_yes_no()`
+- All setup scripts are idempotent (safe to re-run)
+- Secrets are never tracked — `.gitignore` covers keys, tokens, and `.local` files

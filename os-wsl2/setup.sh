@@ -34,7 +34,7 @@ fi
 
 # Run base Linux setup first
 info "Running base Linux setup..."
-LINUX_SETUP="$SCRIPT_DIR/../linux/setup.sh"
+LINUX_SETUP="$SCRIPT_DIR/../os-linux/setup.sh"
 if [ -f "$LINUX_SETUP" ]; then
     chmod +x "$LINUX_SETUP"
     source "$LINUX_SETUP" || error_exit "Base Linux setup failed"

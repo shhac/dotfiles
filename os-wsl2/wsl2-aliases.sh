@@ -43,7 +43,7 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias ~='cd ~'
 
-# Git aliases (complement to git/aliases.sh)
+# Git aliases (complement to git/.gitconfig)
 alias g='git'
 alias gs='git status'
 alias ga='git add'

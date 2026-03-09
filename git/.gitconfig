@@ -1,4 +1,26 @@
+[include]
+	path = ~/.gitconfig.local
+
+[init]
+	defaultBranch = main
+
+[core]
+	excludesFile = ~/.gitignore_global
+
+[commit]
+	gpgsign = true
+
+[push]
+	default = simple
+
+[pull]
+	ff = only
+
+[diff]
+	mnemonicprefix = true
+
 [alias]
+	# Basics
 	f = fetch
 	a = add
 	ai = add --patch
@@ -29,6 +51,8 @@
 	radd = !git rm -r --cached . && git add .
 	mm = merge master
 	empty = "!git cat-file -e e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 || git hash-object -w --stdin < /dev/null; git update-index --add --cacheinfo 0644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+
+	# Switch
 	sw = switch
 	swc = switch -c
 	swm = switch master
@@ -36,6 +60,8 @@
 	swz = "!f(){ git switch \"$@\" && git submodule update --init --recursive; }; f"
 	swmz = !git switch master && git submodule update --init --recursive
 	swlz = !git switch - && git submodule update --init --recursive
+
+	# History rewriting
 	ri = rebase -i
 	rim = rebase -i master
 	ric = rebase --continue
@@ -44,33 +70,38 @@
 	commend = commit --amend --no-edit
 	please = push --force-with-lease
 	fix = "!f(){ git commit --fixup \"${1}\" ${@:2}; git rebase -i \"${1}~1\" --autosquash --autostash; }; f"
+	scop = "!f(){ git stash push && git checkout ${@} && git stash pop; }; f"
+
+	# New repos
 	it = "!f(){ git init; git commit -m \"${1-Initial Commit}\" --allow-empty; }; f"
+
+	# Merged branches
 	br-merged = "!f(){ git branch --merged ${1-master} | cut -c 3- | grep -v ${1-master}; }; f"
 	brr-merged = "!f(){ git branch -r --merged ${2-origin}/${1-master} | grep ${2-origin}/ | cut -c 3- | sed -e \"s/^${2-origin}\\/HEAD \\-\\> //\" | grep -v ${2-origin}/${1-master} | cut -c $(echo \"${2-origin}/.\" | awk '{print length}')-; }; f"
+
+	# Submodules
 	sup = submodule update --init --recursive
 	coz = "!f(){ git checkout \"$@\" && git submodule update --init --recursive; }; f"
 	colz = !git checkout @{-1} && git submodule update --init --recursive
 	comz = !git checkout master && git submodule update --init --recursive
 	plz = !git pull && git submodule update --init --recursive
 	clz = clone --recursive
-	suff = "!f(){ echo \"Submodule Target Branch: ${1-master}\"; git submodule update --init --recursive && echo \"\\n\" && git submodule foreach \"git checkout ${1-master} && git pull --ff-only && git submodule update --init --recursive; echo \"\";\"; }; f"
+	suff = "!f(){ echo \"Submodule Target Branch: ${1-master}\"; git submodule update --init --recursive && echo \"\\n\" && git submodule foreach \"git checkout ${1-master} && git pull --ff-only && git submodule update --init --recursive; echo \\\"\\\";\"; }; f"
 	sucoz = "!f() { git submodule foreach \"rm -r ./*\"; git checkout ${1-master}; git submodule update --init --recursive; git submodule foreach \"git reset --hard HEAD\"; }; f"
 	sufe = submodule foreach
+
+	# Tig
 	history = !git reflog --pretty=raw | tig --pretty=raw
 	bl = !tig blame --
 	file = !tig --
+
+	# diff-so-fancy
 	dsf = "!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy | less --tabs=4 -RFX; }; f"
-	compare = dsf --no-index
 	dsfc = dsf --cached
-	scop = "!f(){ git stash push && git checkout ${@} && git stash pop; }; f"
-[push]
-	default = simple
-[pull]
-	ff = only
-	name = PLACEHOLDER
-	email = PLACEHOLDER
-	signingkey = PLACEHOLDER
-[diff]
-	mnemonicprefix = true
-[commit]
-	gpgSign = true
+	compare = dsf --no-index
+
+	# Branch cleanup
+	merged-remote-view = !git branch -r --merged origin/master | grep origin | grep -v ">" | grep -v master | xargs -L1 | awk "{sub(/origin\\//,\"\");print}"
+	merged-remote-clean = "!git branch -r --merged origin/master | grep origin | grep -v \">\" | grep -v master | sed \"s/origin\\///\" | xargs -I {} git push origin --delete {}"
+	deleted-remote-view = !git remote prune origin --dry-run
+	deleted-remote-clean = !git remote prune origin

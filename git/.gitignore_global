@@ -1,0 +1,9 @@
+.DS_Store
+*.swp
+*~
+.env.local
+.env.*.local
+
+# Claude Code
+CLAUDE.local.md
+settings.local.json
