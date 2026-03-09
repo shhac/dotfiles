@@ -47,3 +47,8 @@ if exists("+undofile")
   set undofile
 endif
 
+" Local overrides (machine-specific, not tracked in dotfiles)
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
+

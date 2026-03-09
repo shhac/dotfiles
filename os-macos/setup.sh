@@ -245,6 +245,18 @@ ZSHLOCAL
   success "Created ~/.zshrc.local (template)"
 fi
 
+# .zprofile.local — try backup first (no template needed)
+promote_backup_to_local "$HOME/.zprofile.local" "$BACKUP_DIR/.zprofile" || true
+
+# .tmux.conf.local — try backup first (no template needed)
+promote_backup_to_local "$HOME/.tmux.conf.local" "$BACKUP_DIR/.tmux.conf" || true
+
+# .vimrc.local — try backup first (no template needed)
+promote_backup_to_local "$HOME/.vimrc.local" "$BACKUP_DIR/.vimrc" || true
+
+# nvim init.local.vim — try backup first (no template needed)
+promote_backup_to_local "$HOME/.config/nvim/init.local.vim" "$BACKUP_DIR/.config/nvim/init.vim" || true
+
 # ─── Phase 6: System Preferences (opt-in) ─────────────────────────────────────
 
 if [ "$INTERACTIVE" = "true" ]; then

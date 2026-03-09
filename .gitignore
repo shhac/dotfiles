@@ -1,5 +1,6 @@
 # Machine-specific overrides (.local file pattern)
 *.local
+*.local.vim
 .local/
 
 # Decrypted secrets (age encryption)

@@ -41,3 +41,8 @@ if exists("+undofile")
   set undodir+=~/.nvim/undo//
   set undofile
 endif
+
+" Local overrides (machine-specific, not tracked in dotfiles)
+if filereadable(expand("~/.config/nvim/init.local.vim"))
+  source ~/.config/nvim/init.local.vim
+endif
