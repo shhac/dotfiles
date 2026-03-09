@@ -171,22 +171,34 @@ done
 info "Phase 5: Machine-specific configuration"
 
 # Helper: if a backup exists for a file that now has a .local counterpart,
-# use the backup as the .local file so nothing breaks on first run.
+# compare the backup against the stowed version. If they differ, promote
+# the backup as the .local file. If identical, skip (no .local needed).
+# For configs where the stowed version is structurally different (gitconfig,
+# ssh), always promote since the backup IS the machine-specific content.
 promote_backup_to_local() {
   local local_file="$1"
   local backup_file="$2"
+  local stowed_file="${3:-}"
 
   if [ -f "$local_file" ]; then
     return 0
   fi
 
-  if [ -f "$backup_file" ]; then
-    cp "$backup_file" "$local_file"
-    success "Migrated $(basename "$backup_file") → $(basename "$local_file")"
-    return 0
+  if [ ! -f "$backup_file" ]; then
+    return 1
   fi
 
-  return 1
+  # If a stowed file was provided, diff against it — skip if identical
+  if [ -n "$stowed_file" ] && [ -f "$stowed_file" ]; then
+    if diff -q "$backup_file" "$stowed_file" &>/dev/null; then
+      info "$(basename "$backup_file") matches stowed version, no .local needed"
+      return 0
+    fi
+  fi
+
+  cp "$backup_file" "$local_file"
+  success "Migrated $(basename "$backup_file") → $(basename "$local_file")"
+  return 0
 }
 
 # .gitconfig.local — try backup first, then prompt
@@ -230,8 +242,8 @@ SSHLOCAL
   success "Created ~/.ssh/config.local (template)"
 fi
 
-# .zshrc.local — try backup first, then template
-if ! promote_backup_to_local "$HOME/.zshrc.local" "$BACKUP_DIR/.zshrc"; then
+# .zshrc.local — try backup first, compare with stowed version
+if ! promote_backup_to_local "$HOME/.zshrc.local" "$BACKUP_DIR/.zshrc" "$DOTFILES_DIR/shell/.zshrc"; then
   cat > "$HOME/.zshrc.local" << 'ZSHLOCAL'
 # Machine-specific shell configuration
 # This file is sourced at the end of ~/.zshrc
@@ -245,17 +257,17 @@ ZSHLOCAL
   success "Created ~/.zshrc.local (template)"
 fi
 
-# .zprofile.local — try backup first (no template needed)
-promote_backup_to_local "$HOME/.zprofile.local" "$BACKUP_DIR/.zprofile" || true
+# .zprofile.local — compare with stowed version
+promote_backup_to_local "$HOME/.zprofile.local" "$BACKUP_DIR/.zprofile" "$DOTFILES_DIR/shell/.zprofile" || true
 
-# .tmux.conf.local — try backup first (no template needed)
-promote_backup_to_local "$HOME/.tmux.conf.local" "$BACKUP_DIR/.tmux.conf" || true
+# .tmux.conf.local — compare with stowed version
+promote_backup_to_local "$HOME/.tmux.conf.local" "$BACKUP_DIR/.tmux.conf" "$DOTFILES_DIR/tmux/.tmux.conf" || true
 
-# .vimrc.local — try backup first (no template needed)
-promote_backup_to_local "$HOME/.vimrc.local" "$BACKUP_DIR/.vimrc" || true
+# .vimrc.local — compare with stowed version
+promote_backup_to_local "$HOME/.vimrc.local" "$BACKUP_DIR/.vimrc" "$DOTFILES_DIR/vim/.vimrc" || true
 
-# nvim init.local.vim — try backup first (no template needed)
-promote_backup_to_local "$HOME/.config/nvim/init.local.vim" "$BACKUP_DIR/.config/nvim/init.vim" || true
+# nvim init.local.vim — compare with stowed version
+promote_backup_to_local "$HOME/.config/nvim/init.local.vim" "$BACKUP_DIR/.config/nvim/init.vim" "$DOTFILES_DIR/nvim/.config/nvim/init.vim" || true
 
 # ─── Phase 6: System Preferences (opt-in) ─────────────────────────────────────
 
