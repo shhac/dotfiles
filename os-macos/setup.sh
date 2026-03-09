@@ -39,7 +39,7 @@ success "Homebrew ready"
 info "Phase 2: Packages"
 
 if [ -f "$DOTFILES_DIR/Brewfile" ]; then
-  brew bundle install --file="$DOTFILES_DIR/Brewfile" --no-lock || warning "Some brew packages failed (continuing)"
+  brew bundle install --file="$DOTFILES_DIR/Brewfile" || warning "Some brew packages failed (continuing)"
   success "Brew packages installed"
 else
   warning "No Brewfile found, skipping package installation"
