@@ -4,6 +4,7 @@ tap "hashicorp/tap"
 tap "mongodb/brew"
 tap "oven-sh/bun"
 tap "shhac/tap"
+tap "manaflow-ai/cmux"
 tap "withgraphite/tap"
 
 # Core tools
@@ -84,9 +85,8 @@ brew "postgresql@14"
 # Casks
 cask "font-fira-code"
 cask "gcloud-cli"
-cask "shhac/tap/grotto"
 cask "maccy"
-cask "wombat"
+cask "cmux"
 
 # Mac App Store
 mas "Developer", id: 640199958
@@ -98,44 +98,6 @@ mas "Slack", id: 803453959
 mas "TestFlight", id: 899247664
 mas "WhatsApp", id: 310633997
 mas "Xcode", id: 497799835
-
-# VS Code extensions
-vscode "alefragnani.project-manager"
-vscode "alexcvzz.vscode-sqlite"
-vscode "bierner.markdown-mermaid"
-vscode "bradlc.vscode-tailwindcss"
-vscode "cardinal90.multi-cursor-case-preserve"
-vscode "dbaeumer.vscode-eslint"
-vscode "eamodio.gitlens"
-vscode "esbenp.prettier-vscode"
-vscode "firsttris.vscode-jest-runner"
-vscode "github.copilot"
-vscode "github.copilot-chat"
-vscode "github.vscode-github-actions"
-vscode "golang.go"
-vscode "graphite.gti-vscode"
-vscode "graphql.vscode-graphql"
-vscode "graphql.vscode-graphql-execution"
-vscode "graphql.vscode-graphql-syntax"
-vscode "heybourn.headwind"
-vscode "johnpapa.vscode-peacock"
-vscode "mechatroner.rainbow-csv"
-vscode "mikestead.dotenv"
-vscode "million.million-lint"
-vscode "ms-vscode.makefile-tools"
-vscode "ms-vsliveshare.vsliveshare"
-vscode "mtxr.sqltools"
-vscode "orta.vscode-twoslash-queries"
-vscode "oven.bun-vscode"
-vscode "prisma.prisma"
-vscode "rvest.vs-code-prettier-eslint"
-vscode "simonsiefke.svg-preview"
-vscode "streetsidesoftware.code-spell-checker"
-vscode "unifiedjs.vscode-mdx"
-vscode "vikas.code-navigation"
-vscode "wmaurer.change-case"
-vscode "yoavbls.pretty-ts-errors"
-vscode "zxh404.vscode-proto3"
 
 # Go tools (installed via go install)
 go "fyne.io/fyne/v2/cmd/fyne"
