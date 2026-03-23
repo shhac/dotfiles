@@ -305,6 +305,18 @@ if [ -f "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
   success "Tmux plugins installed"
 fi
 
+# Install Claude Code skills (bun is available via Homebrew; npx requires nvm which isn't sourced yet)
+if command -v bunx &>/dev/null; then
+  info "Installing Claude Code skills..."
+  bunx skills add shhac/git-hunk -g -a claude-code -y || warning "Failed to install git-hunk skill"
+  bunx skills add shhac/lin -g -a claude-code -y || warning "Failed to install lin skill"
+  bunx skills add shhac/agent-mongo -g -a claude-code -y || warning "Failed to install agent-mongo skill"
+  bunx skills add shhac/agent-notion -g -a claude-code -y || warning "Failed to install agent-notion skill"
+  success "Claude Code skills installed"
+else
+  warning "bunx not found — skipping Claude Code skill installation"
+fi
+
 # ─── Done ──────────────────────────────────────────────────────────────────────
 
 echo ""
@@ -317,11 +329,6 @@ echo "  - Sign into Mac App Store (for mas packages in Brewfile)"
 echo "  - Install dev tools (auto-update, not in Brewfile):"
 echo "      Cursor:      https://cursor.com/downloads"
 echo "      Claude Code:  curl -fsSL https://claude.ai/install.sh | bash"
-echo "  - Install Claude Code skills for CLI tools in Brewfile:"
-echo "      npx skills add shhac/git-hunk -g -a claude-code -y"
-echo "      npx skills add shhac/lin -g -a claude-code -y"
-echo "      npx skills add shhac/agent-mongo -g -a claude-code -y"
-echo "      npx skills add shhac/agent-notion -g -a claude-code -y"
 echo "  - Authenticate services:"
 echo "      gh auth login"
 echo "      npm login"
