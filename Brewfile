@@ -29,6 +29,7 @@ brew "diff-so-fancy"
 brew "thefuck"
 
 # Development
+brew "uv"
 brew "go"
 brew "zig"
 brew "zls"
