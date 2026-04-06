@@ -1,3 +1,6 @@
+# Local bin (prepended first so local overrides take precedence)
+[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="shhac-starship-rounded-bubble"
 ZSH_CUSTOM="$HOME/.zsh"
