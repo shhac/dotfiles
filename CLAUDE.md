@@ -21,6 +21,7 @@ dotfiles/
 ├── vim/                  # .vimrc
 ├── nvim/                 # .config/nvim/init.vim
 ├── ghostty/              # .config/ghostty/config
+├── cmux/                 # .config/cmux/settings.json
 ├── tmux/                 # .tmux.conf
 ├── ssh/                  # .ssh/config (includes .ssh/config.local)
 ├── gpg/                  # .gnupg/gpg-agent.conf
