@@ -52,7 +52,7 @@ info "Phase 3: Frameworks"
 # Oh My Zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   info "Installing Oh My Zsh..."
-  CHSH=no RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  CHSH=no RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
   success "Oh My Zsh installed"
 else
   success "Oh My Zsh already installed"
@@ -69,7 +69,7 @@ fi
 # NVM
 if [ ! -d "$HOME/.nvm" ]; then
   info "Installing NVM..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE=/dev/null bash
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   nvm install --lts
@@ -151,6 +151,12 @@ for pkg in "${stow_packages[@]}"; do
   # Find all files in the package and check for conflicts
   while IFS= read -r -d '' file; do
     rel="${file#$pkg_dir/}"
+
+    # ~/.zshrc is intentionally a local bootstrap file (not stowed)
+    if [ "$pkg" = "shell" ] && [ "$rel" = ".zshrc" ]; then
+      continue
+    fi
+
     target="$HOME/$rel"
     backup_if_needed "$target"
   done < <(find "$pkg_dir" -type f -print0)
@@ -163,12 +169,68 @@ for pkg in "${stow_packages[@]}"; do
   else
     stow --no-folding -d "$DOTFILES_DIR" -t "$HOME" "$pkg" || warning "Stow failed for $pkg"
   fi
+
+  # ~/.zshrc is intentionally local (bootstrap + local markers), not tracked
+  if [ "$pkg" = "shell" ] && [ -L "$HOME/.zshrc" ]; then
+    rm "$HOME/.zshrc"
+    info "Removed stowed ~/.zshrc symlink to keep local bootstrap ownership"
+  fi
+
   success "Stowed: $pkg"
 done
+
+ensure_zshrc_bootstrap() {
+  local zshrc_path="$HOME/.zshrc"
+  local bootstrap_template="$DOTFILES_DIR/shell/.zshrc"
+
+  # Remove symlinked .zshrc to enforce local bootstrap ownership
+  if [ -L "$zshrc_path" ]; then
+    rm "$zshrc_path"
+    info "Removed ~/.zshrc symlink to enforce local bootstrap ownership"
+  fi
+
+  # Keep existing bootstrap if managed markers are already present
+  if [ -f "$zshrc_path" ] && grep -q "DOTFILES MANAGED START" "$zshrc_path" && grep -q "DOTFILES MANAGED END" "$zshrc_path"; then
+    success "Using existing local ~/.zshrc bootstrap"
+    return 0
+  fi
+
+  # If a real file exists without managed markers, preserve it as local overrides
+  if [ -f "$zshrc_path" ] && [ ! -f "$HOME/.zshrc.local" ]; then
+    cp "$zshrc_path" "$HOME/.zshrc.local"
+    info "Migrated existing ~/.zshrc content to ~/.zshrc.local"
+  fi
+
+  if [ -f "$bootstrap_template" ]; then
+    cp "$bootstrap_template" "$zshrc_path"
+  else
+    cat > "$zshrc_path" << 'ZSHRC_BOOTSTRAP'
+# -----------------------------------------------------------------------------
+# Dotfiles-managed zsh bootstrap
+# Only the managed block below is maintained by dotfiles setup.
+# Tools/installers may append outside this block.
+# -----------------------------------------------------------------------------
+# >>> DOTFILES MANAGED START >>>
+
+# Shared tracked config (symlinked from dotfiles)
+[ -f "$HOME/.zshrc.shared" ] && source "$HOME/.zshrc.shared"
+
+# Machine-specific overrides (untracked)
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+
+# <<< DOTFILES MANAGED END <<<
+# -----------------------------------------------------------------------------
+ZSHRC_BOOTSTRAP
+  fi
+
+  success "Ensured local ~/.zshrc bootstrap"
+}
 
 # ─── Phase 5: Machine-specific config ─────────────────────────────────────────
 
 info "Phase 5: Machine-specific configuration"
+
+ensure_zshrc_bootstrap
 
 # Helper: if a backup exists for a file that now has a .local counterpart,
 # compare the backup against the stowed version. If they differ, promote
@@ -242,8 +304,8 @@ SSHLOCAL
   success "Created ~/.ssh/config.local (template)"
 fi
 
-# .zshrc.local — try backup first, compare with stowed version
-if ! promote_backup_to_local "$HOME/.zshrc.local" "$BACKUP_DIR/.zshrc" "$DOTFILES_DIR/shell/.zshrc"; then
+# .zshrc.local — try backup first, compare with tracked shared config
+if ! promote_backup_to_local "$HOME/.zshrc.local" "$BACKUP_DIR/.zshrc" "$DOTFILES_DIR/shell/.zshrc.shared"; then
   cat > "$HOME/.zshrc.local" << 'ZSHLOCAL'
 # Machine-specific shell configuration
 # This file is sourced at the end of ~/.zshrc

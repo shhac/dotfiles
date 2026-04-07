@@ -38,7 +38,7 @@ Each top-level directory is a **stow package** that mirrors `$HOME`:
 
 ```
 dotfiles/
-├── shell/              → ~/.zshrc, ~/.zprofile, ~/.zsh/conf.d/*, ~/.zsh/themes/*
+├── shell/              → ~/.zshrc.shared, ~/.zprofile, ~/.zsh/conf.d/*, ~/.zsh/themes/*
 ├── git/                → ~/.gitconfig, ~/.gitignore_global
 ├── vim/                → ~/.vimrc
 ├── nvim/               → ~/.config/nvim/init.vim
@@ -60,11 +60,12 @@ dotfiles/
 ```
 
 Running `stow shell` from this directory creates symlinks:
-- `~/.zshrc` → `dotfiles/shell/.zshrc`
+- `~/.zshrc.shared` → `dotfiles/shell/.zshrc.shared`
+- `~/.zprofile` → `dotfiles/shell/.zprofile`
 - `~/.zsh/conf.d/git.sh` → `dotfiles/shell/.zsh/conf.d/git.sh`
 - etc.
 
-Changes you make to either the symlink or the repo file are the same thing — no copying, no drift.
+`~/.zshrc` is intentionally a local bootstrap file (not symlinked) that sources `~/.zshrc.shared` and `~/.zshrc.local`.
 
 ## Machine-Specific Overrides
 
@@ -72,7 +73,7 @@ Configs use the **`.local` file pattern** — tracked files source/include an un
 
 | Tracked config | Sources/includes | Purpose |
 |---|---|---|
-| `~/.zshrc` | `~/.zshrc.local` | Machine-specific PATH, env vars |
+| `~/.zshrc.shared` | `~/.zshrc.local` (via local `~/.zshrc` bootstrap) | Shared shell config + machine-specific PATH/env |
 | `~/.gitconfig` | `~/.gitconfig.local` | User identity, signing key, `[includeIf]` |
 | `~/.ssh/config` | `~/.ssh/config.local` | Machine-specific SSH hosts |
 | `~/.zprofile` | `~/.zprofile.local` | Machine-specific shell profile |
@@ -144,7 +145,7 @@ ls -la ~/.config/toolname/config
 
 ## Updating
 
-After making changes to configs on your machine (they're symlinks, so changes go directly to the repo):
+After making changes to tracked configs on your machine (they're symlinks, so changes go directly to the repo):
 
 ```bash
 cd ~/.dotfiles

@@ -4,8 +4,10 @@
 echo "Setting up WSL2-Windows interoperability..."
 
 # Add Windows PATH integration (selective)
-if ! grep -q "# WSL2 Windows PATH" ~/.zshrc; then
-    cat >> ~/.zshrc << 'EOF'
+ZSHRC_LOCAL="$HOME/.zshrc.local"
+touch "$ZSHRC_LOCAL"
+if ! grep -q "# WSL2 Windows PATH" "$ZSHRC_LOCAL"; then
+    cat >> "$ZSHRC_LOCAL" << 'EOF'
 
 # WSL2 Windows PATH integration
 export WINDOWS_HOST=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')

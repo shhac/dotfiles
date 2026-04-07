@@ -6,9 +6,11 @@ echo "Setting up X11 forwarding for GUI applications..."
 # Install X11 utilities
 sudo apt install -y x11-apps xauth
 
-# Add X11 configuration to shell
-if ! grep -q "# X11 Display" ~/.zshrc; then
-    cat >> ~/.zshrc << 'EOF'
+# Add X11 configuration to machine-specific shell config
+ZSHRC_LOCAL="$HOME/.zshrc.local"
+touch "$ZSHRC_LOCAL"
+if ! grep -q "# X11 Display" "$ZSHRC_LOCAL"; then
+    cat >> "$ZSHRC_LOCAL" << 'EOF'
 
 # X11 Display configuration for WSL2
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0

@@ -11,3 +11,5 @@ lib
 Brewfile
 \.gitignore
 \.stow-local-ignore
+shell/\.zshrc
+

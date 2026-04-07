@@ -1,24 +1,16 @@
-# Local bin (prepended first so local overrides take precedence)
-[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+# -----------------------------------------------------------------------------
+# Dotfiles-managed zsh bootstrap
+# Only the managed block below is maintained by dotfiles setup.
+# Tools/installers may append outside this block.
+# -----------------------------------------------------------------------------
+# >>> DOTFILES MANAGED START >>>
 
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="shhac-starship-rounded-bubble"
-ZSH_CUSTOM="$HOME/.zsh"
-export DEFAULT_USER="paul"
+# Shared tracked config (symlinked from dotfiles)
+[ -f "$HOME/.zshrc.shared" ] && source "$HOME/.zshrc.shared"
 
-plugins=(git git-open)
+# Machine-specific overrides (untracked)
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
-source $ZSH/oh-my-zsh.sh
+# <<< DOTFILES MANAGED END <<<
+# -----------------------------------------------------------------------------
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# Load conf.d
-for file in ~/.zsh/conf.d/*; do
-  [ -r "$file" ] && source "$file"
-done
-
-# Local overrides (machine-specific, not tracked in dotfiles)
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local

@@ -281,12 +281,16 @@ EOF
 
 success "Linux-specific aliases created"
 
-# Add Linux aliases to shell configuration
-if [ -f ~/.zshrc ] && ! grep -q "linux-aliases.sh" ~/.zshrc; then
-    echo "" >> ~/.zshrc
-    echo "# Linux-specific aliases" >> ~/.zshrc
-    echo "[ -f \"$SCRIPT_DIR/linux-aliases.sh\" ] && source \"$SCRIPT_DIR/linux-aliases.sh\"" >> ~/.zshrc
-    success "Linux aliases added to ~/.zshrc"
+# Add Linux aliases to shell configuration (machine-specific)
+ZSHRC_LOCAL="$HOME/.zshrc.local"
+touch "$ZSHRC_LOCAL"
+if ! grep -q "linux-aliases.sh" "$ZSHRC_LOCAL"; then
+    {
+        echo ""
+        echo "# Linux-specific aliases"
+        echo "[ -f \"$SCRIPT_DIR/linux-aliases.sh\" ] && source \"$SCRIPT_DIR/linux-aliases.sh\""
+    } >> "$ZSHRC_LOCAL"
+    success "Linux aliases added to ~/.zshrc.local"
 fi
 
 echo ""

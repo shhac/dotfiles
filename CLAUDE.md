@@ -16,7 +16,7 @@ dotfiles/
 ├── .stow-local-ignore    # Prevents stow from linking repo management files
 │
 ├── # Stow packages (each mirrors $HOME)
-├── shell/                # .zshrc, .zprofile, .zsh/conf.d/*, .zsh/themes/*
+├── shell/                # .zshrc.shared, .zprofile, .zsh/conf.d/*, .zsh/themes/*
 ├── git/                  # .gitconfig, .gitignore_global
 ├── vim/                  # .vimrc
 ├── nvim/                 # .config/nvim/init.vim
@@ -43,7 +43,7 @@ dotfiles/
 
 ### .local File Pattern
 All tracked configs source/include a gitignored `.local` counterpart for machine-specific overrides:
-- `.zshrc` → sources `~/.zshrc.local`
+- `.zshrc.shared` → sourced by local `~/.zshrc` bootstrap, then sources `~/.zshrc.local`
 - `.gitconfig` → `[include] path = ~/.gitconfig.local`
 - `.ssh/config` → `Include ~/.ssh/config.local`
 
