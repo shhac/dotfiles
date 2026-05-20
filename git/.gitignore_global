@@ -4,6 +4,11 @@
 .env.local
 .env.*.local
 
+# gwt
+.gwt/
+.git-wt-copy-files
+.worktrees/
+
 # Claude Code
 CLAUDE.local.md
 settings.local.json
