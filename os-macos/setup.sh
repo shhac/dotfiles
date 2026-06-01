@@ -286,8 +286,11 @@ fi
 if [ -f "$DOTFILES_DIR/agents/.agents/.skill-lock.json" ]; then
   if command -v npx &>/dev/null || command -v bunx &>/dev/null; then
     info "Installing global agent skills from lock..."
-    "$DOTFILES_DIR/scripts/install-skills-from-lock.sh" "$DOTFILES_DIR/agents/.agents/.skill-lock.json" || warning "Failed to install some global agent skills"
-    success "Global agent skills installed"
+    if "$DOTFILES_DIR/scripts/install-skills-from-lock.sh" "$DOTFILES_DIR/agents/.agents/.skill-lock.json"; then
+      success "Global agent skills installed"
+    else
+      warning "Failed to install some global agent skills"
+    fi
   else
     warning "npx/bunx not found — skipping global agent skill installation"
   fi

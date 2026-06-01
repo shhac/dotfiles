@@ -14,7 +14,7 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 if command -v npx >/dev/null 2>&1; then
-  skills_cmd=(npx skills)
+  skills_cmd=(npx -y skills)
 elif command -v bunx >/dev/null 2>&1; then
   skills_cmd=(bunx skills)
 else
@@ -23,10 +23,14 @@ else
 fi
 
 agent_args=()
+agent_arg_count=0
 if [ -n "${DOTFILES_SKILLS_AGENTS:-}" ]; then
   IFS=',' read -r -a agents <<< "$DOTFILES_SKILLS_AGENTS"
   for agent in "${agents[@]}"; do
-    [ -n "$agent" ] && agent_args+=("-a" "$agent")
+    if [ -n "$agent" ]; then
+      agent_args+=("-a" "$agent")
+      agent_arg_count=$((agent_arg_count + 2))
+    fi
   done
 fi
 
@@ -39,7 +43,9 @@ while IFS=$'\t' read -r source skills_csv; do
   for skill_name in "${skill_names[@]}"; do
     [ -n "$skill_name" ] && cmd+=("--skill" "$skill_name")
   done
-  cmd+=("${agent_args[@]}")
+  if [ "$agent_arg_count" -gt 0 ]; then
+    cmd+=("${agent_args[@]}")
+  fi
 
   echo "Installing skills from $source"
   "${cmd[@]}"

@@ -4,6 +4,7 @@
 \.ai-cache
 README\.md
 CLAUDE\.md
+AGENTS\.md
 LICENSE
 setup\.sh
 os-.*
