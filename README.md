@@ -43,6 +43,7 @@ dotfiles/
 ├── vim/                → ~/.vimrc
 ├── nvim/               → ~/.config/nvim/init.vim
 ├── ghostty/            → ~/.config/ghostty/config
+├── codex/              → ~/.codex/pets/* (custom pets only)
 ├── tmux/               → ~/.tmux.conf
 ├── ssh/                → ~/.ssh/config
 ├── gpg/                → ~/.gnupg/gpg-agent.conf
@@ -115,6 +116,16 @@ gm chore deps "update package versions"  # chore[deps]: update package versions
 - **Plugins:** `git`, `git-open`
 - **Custom functions/aliases** loaded from `~/.zsh/conf.d/`
 - **11 custom themes** available in `~/.zsh/themes/`
+
+## Codex
+
+Custom Codex pets are tracked in `codex/.codex/pets/` and stowed into
+`~/.codex/pets/`. The rest of `~/.codex` is intentionally left untracked because
+it contains auth state, caches, sessions, logs, local runtime paths, and trusted
+workspace settings.
+
+The currently selected pet lives in `~/.codex/config.toml` as local app state.
+After setting up a new machine, reselect the preferred custom pet in Codex.
 
 ## After Setup
 

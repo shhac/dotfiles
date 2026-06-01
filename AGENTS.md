@@ -22,6 +22,7 @@ dotfiles/
 ├── nvim/                 # .config/nvim/init.vim
 ├── ghostty/              # .config/ghostty/config
 ├── cmux/                 # .config/cmux/settings.json
+├── codex/                # .codex/pets/* (custom pets only)
 ├── tmux/                 # .tmux.conf
 ├── ssh/                  # .ssh/config (includes .ssh/config.local)
 ├── gpg/                  # .gnupg/gpg-agent.conf
@@ -57,6 +58,11 @@ All tracked configs source/include a gitignored `.local` counterpart for machine
 - All aliases defined directly in `git/.gitconfig` (not via `git config --global` commands)
 - User identity, signing key, and `[includeIf]` blocks go in `~/.gitconfig.local`
 - `gm` function in `shell/.zsh/conf.d/git.sh` for conventional commits: `gm feat api "message"`
+
+### Codex Configuration
+- Track only portable custom pets in `codex/.codex/pets/`
+- Do not track the rest of `~/.codex`; it contains auth state, caches, sessions, logs, local runtime paths, and trusted workspace settings
+- The selected pet in `~/.codex/config.toml` is local app state; reselect it in Codex after setting up a new machine
 
 ## Setup Flow (macOS)
 
