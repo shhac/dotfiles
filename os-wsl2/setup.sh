@@ -3,6 +3,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export DOTFILES_OS="${DOTFILES_OS:-wsl2}"
 
 # Load common utilities if available
 if [ -f "$SCRIPT_DIR/../lib/utils.sh" ]; then
@@ -101,17 +102,7 @@ if prompt_yes_no "Set up WSL2-specific configurations? (Windows interop, X11, al
         success "X11 forwarding configured"
     fi
 
-    # Add WSL2-specific aliases to machine-specific shell configuration
-    ZSHRC_LOCAL="$HOME/.zshrc.local"
-    touch "$ZSHRC_LOCAL"
-    if [ -f "$SCRIPT_DIR/wsl2-aliases.sh" ] && ! grep -q "wsl2-aliases.sh" "$ZSHRC_LOCAL"; then
-        {
-            echo ""
-            echo "# WSL2-specific aliases"
-            echo "[ -f \"$SCRIPT_DIR/wsl2-aliases.sh\" ] && source \"$SCRIPT_DIR/wsl2-aliases.sh\""
-        } >> "$ZSHRC_LOCAL"
-        success "WSL2 aliases added to ~/.zshrc.local"
-    fi
+    info "WSL2 shell aliases are managed by the wsl2 stow package"
 else
     info "Skipping WSL2-specific configurations"
 fi

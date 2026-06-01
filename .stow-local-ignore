@@ -8,8 +8,9 @@ LICENSE
 setup\.sh
 os-.*
 lib
+scripts
+templates
 Brewfile
+stow-packages\.txt
 \.gitignore
 \.stow-local-ignore
-shell/\.zshrc
-

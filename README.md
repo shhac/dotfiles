@@ -32,9 +32,18 @@ That's it. The setup script handles everything:
 ./setup.sh --yes
 ```
 
+### Stow-only and doctor modes
+
+```bash
+./setup.sh --stow-only          # Stow all packages for this OS
+./setup.sh --stow-only codex    # Stow one package
+./setup.sh --doctor             # Check stow, symlinks, secrets, and permissions
+```
+
 ## How It Works
 
-Each top-level directory is a **stow package** that mirrors `$HOME`:
+Packages are listed explicitly in `stow-packages.txt`. Each package mirrors
+`$HOME`:
 
 ```
 dotfiles/
@@ -44,6 +53,9 @@ dotfiles/
 ├── nvim/               → ~/.config/nvim/init.vim
 ├── ghostty/            → ~/.config/ghostty/config
 ├── codex/              → ~/.codex/pets/* (custom pets only)
+├── cmux/               → ~/.config/cmux/cmux.json
+├── graphite/           → ~/.config/graphite/aliases
+├── agents/             → ~/.agents/.skill-lock.json
 ├── tmux/               → ~/.tmux.conf
 ├── ssh/                → ~/.ssh/config
 ├── gpg/                → ~/.gnupg/gpg-agent.conf
@@ -55,7 +67,10 @@ dotfiles/
 ├── os-linux/           # Linux setup
 ├── os-wsl2/            # WSL2 setup
 ├── lib/                # Shared shell utilities
+├── scripts/            # Helper scripts used by setup
+├── templates/          # Bootstrap templates copied into local files
 ├── Brewfile            # Homebrew packages, casks, and apps
+├── stow-packages.txt   # Explicit package manifest
 ├── setup.sh            # Entry point (detects OS, delegates)
 └── .stow-local-ignore  # Prevents stow from linking repo files
 ```
@@ -65,6 +80,9 @@ Running `stow shell` from this directory creates symlinks:
 - `~/.zprofile` → `dotfiles/shell/.zprofile`
 - `~/.zsh/conf.d/git.sh` → `dotfiles/shell/.zsh/conf.d/git.sh`
 - etc.
+
+Prefer `./setup.sh --stow-only [package]` for normal package updates; it uses the
+same backup and OS-override logic as full setup.
 
 `~/.zshrc` is intentionally a local bootstrap file (not symlinked) that sources `~/.zshrc.shared` and `~/.zshrc.local`.
 
@@ -127,6 +145,24 @@ workspace settings.
 The currently selected pet lives in `~/.codex/config.toml` as local app state.
 After setting up a new machine, reselect the preferred custom pet in Codex.
 
+## Agent Skills
+
+Global skills installed with `npx skills` are tracked by lock metadata in
+`agents/.agents/.skill-lock.json`, not by vendoring installed skill directories.
+Setup uses `scripts/install-skills-from-lock.sh` to reinstall the locked skills.
+Set `DOTFILES_SKILLS_AGENTS=claude-code,codex` to force target agents; otherwise
+the `skills` CLI auto-detects available agents.
+
+Personal skill source lives outside this repo, in the sibling `../skills` repo.
+
+## Secrets
+
+Secrets are not tracked. The repo includes `age` in the Brewfile and ignores
+common decrypted secret filenames, but there is no automatic secret encryption
+workflow yet. Files such as `.npmrc`, `.yarnrc`, `.yarnrc.yml`, `.netrc`, cloud
+credentials, tokens, and `.local` overrides should stay untracked unless they are
+sanitized or deliberately encrypted.
+
 ## After Setup
 
 These steps require manual action:
@@ -147,8 +183,8 @@ To track a new tool's config:
 mkdir -p toolname/.config/toolname
 cp ~/.config/toolname/config toolname/.config/toolname/config
 
-# 2. Stow it
-stow --no-folding toolname
+# 2. Add it to stow-packages.txt, then stow it
+./setup.sh --stow-only toolname
 
 # 3. Verify the symlink
 ls -la ~/.config/toolname/config
@@ -160,7 +196,7 @@ After making changes to tracked configs on your machine (they're symlinks, so ch
 
 ```bash
 cd ~/.dotfiles
-git add -p
+git hunk add --all
 git commit -m "update: description of changes"
 git push
 ```

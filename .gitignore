@@ -21,6 +21,8 @@ openpgp-revocs.d/
 secring.gpg
 S.gpg-agent*
 .npmrc
+.yarnrc
+.yarnrc.yml
 .netrc
 .env*
 known_hosts*

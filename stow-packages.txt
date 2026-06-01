@@ -1,0 +1,21 @@
+# Stow packages to apply.
+# Format: <package> [scope]
+# Scope is optional. Use comma-separated OS names for OS-specific packages:
+# macos, linux, wsl2.
+
+shell
+git
+vim
+nvim
+ghostty
+cmux
+codex
+graphite
+agents
+tmux
+ssh
+
+# OS-specific packages
+gpg macos
+linux linux,wsl2
+wsl2 wsl2

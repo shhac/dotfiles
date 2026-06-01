@@ -4,7 +4,7 @@ This file provides guidance to LLMs when working with this repository.
 
 ## Project Overview
 
-Personal dotfiles repository managed with **GNU Stow**. Each top-level directory is a stow package that mirrors `$HOME` — stow creates symlinks from the package contents into the home directory. Supports macOS, Linux, and WSL2.
+Personal dotfiles repository managed with **GNU Stow**. Packages are listed in `stow-packages.txt` and mirror `$HOME` — stow creates symlinks from the package contents into the home directory. Supports macOS, Linux, and WSL2.
 
 ## Repository Structure
 
@@ -12,6 +12,7 @@ Personal dotfiles repository managed with **GNU Stow**. Each top-level directory
 dotfiles/
 ├── setup.sh              # Entry point: detects OS, delegates to os-*/setup.sh
 ├── Brewfile              # Declarative Homebrew packages, casks, and apps
+├── stow-packages.txt     # Explicit package manifest
 ├── .gitignore            # Ignores secrets, .local files, OS artifacts
 ├── .stow-local-ignore    # Prevents stow from linking repo management files
 │
@@ -21,8 +22,12 @@ dotfiles/
 ├── vim/                  # .vimrc
 ├── nvim/                 # .config/nvim/init.vim
 ├── ghostty/              # .config/ghostty/config
-├── cmux/                 # .config/cmux/settings.json
+├── cmux/                 # .config/cmux/cmux.json
 ├── codex/                # .codex/pets/* (custom pets only)
+├── graphite/             # .config/graphite/aliases
+├── agents/               # .agents/.skill-lock.json
+├── linux/                # .zsh/conf.d/linux.sh (Linux/WSL2 only)
+├── wsl2/                 # .zsh/conf.d/wsl2.sh (WSL2 only)
 ├── tmux/                 # .tmux.conf
 ├── ssh/                  # .ssh/config (includes .ssh/config.local)
 ├── gpg/                  # .gnupg/gpg-agent.conf
@@ -32,7 +37,9 @@ dotfiles/
 ├── os-linux/             # setup.sh
 ├── os-wsl2/              # setup.sh, wsl-interop.sh, wsl2-aliases.sh, x11-setup.sh
 │
-└── lib/                  # Shared utilities (utils.sh)
+├── lib/                  # Shared utilities (utils.sh, stow.sh, doctor.sh)
+├── scripts/              # Helper scripts used by setup
+└── templates/            # Bootstrap templates copied into local files
 ```
 
 ## Key Patterns
@@ -41,6 +48,7 @@ dotfiles/
 - `stow --no-folding -t $HOME <package>` creates file-level symlinks (never directory-level)
 - Changes to symlinked files are changes to the repo — no copy/sync step needed
 - OS-specific overrides: if `os-macos/<package>/` exists, it's stowed instead of the common package
+- Use `./setup.sh --stow-only [package]` for normal stow operations; it reads `stow-packages.txt` and uses shared backup logic from `lib/stow.sh`
 
 ### .local File Pattern
 All tracked configs source/include a gitignored `.local` counterpart for machine-specific overrides:
@@ -64,6 +72,11 @@ All tracked configs source/include a gitignored `.local` counterpart for machine
 - Do not track the rest of `~/.codex`; it contains auth state, caches, sessions, logs, local runtime paths, and trusted workspace settings
 - The selected pet in `~/.codex/config.toml` is local app state; reselect it in Codex after setting up a new machine
 
+### Agent Skills
+- Track `npx skills` global lock metadata in `agents/.agents/.skill-lock.json`
+- Do not vendor installed skill directories; personal skill source lives in the sibling `../skills` repo
+- Setup reinstalls global skills via `scripts/install-skills-from-lock.sh`
+
 ## Setup Flow (macOS)
 
 `setup.sh` → `os-macos/setup.sh`:
@@ -81,9 +94,11 @@ All tracked configs source/include a gitignored `.local` counterpart for machine
 # Setup
 ./setup.sh              # Full setup
 ./setup.sh --yes        # Non-interactive
+./setup.sh --stow-only  # Stow all packages for this OS
+./setup.sh --doctor     # Check stow, symlinks, secrets, and permissions
 
 # Manual stow operations
-stow --no-folding -t $HOME shell    # Stow a single package
+./setup.sh --stow-only shell        # Stow a single package
 stow -D -t $HOME shell              # Unstow a package
 
 # Update Brewfile
@@ -94,5 +109,7 @@ brew bundle dump --force --describe --file=Brewfile
 
 - No build process — pure shell scripts and config files
 - `lib/utils.sh` provides `success()`, `info()`, `warning()`, `error_exit()`, `prompt_yes_no()`
+- `lib/stow.sh` owns package manifest parsing, conflict backups, and stow application
+- `lib/doctor.sh` owns `./setup.sh --doctor`
 - All setup scripts are idempotent (safe to re-run)
 - Secrets are never tracked — `.gitignore` covers keys, tokens, and `.local` files

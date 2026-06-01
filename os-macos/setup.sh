@@ -6,6 +6,7 @@ BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 INTERACTIVE="${INTERACTIVE:-true}"
 
 source "$DOTFILES_DIR/lib/utils.sh"
+source "$DOTFILES_DIR/lib/stow.sh"
 
 # ─── Phase 1: Foundation ───────────────────────────────────────────────────────
 
@@ -91,97 +92,11 @@ fi
 
 info "Phase 4: Stow configuration"
 
-# Ensure stow is available
-if ! command -v stow &>/dev/null; then
-  error_exit "GNU Stow is required but not installed. Run: brew install stow"
-fi
-
-# Backup conflicting files before stowing
-backup_if_needed() {
-  local target="$1"
-  if [ -L "$target" ]; then
-    rm "$target"
-  elif [ -e "$target" ]; then
-    local rel_path="${target#$HOME/}"
-    local backup_path="$BACKUP_DIR/$rel_path"
-    mkdir -p "$(dirname "$backup_path")"
-    mv "$target" "$backup_path"
-    info "Backed up: $target → $backup_path"
-  fi
-}
-
-# Directories that need to exist with correct permissions before stowing
-mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
-mkdir -p "$HOME/.gnupg" && chmod 700 "$HOME/.gnupg"
-mkdir -p "$HOME/.config"
-mkdir -p "$HOME/.zsh"
-
-# Collect stow packages (exclude os-*, .git, lib, and non-package files)
-stow_packages=()
-for dir in "$DOTFILES_DIR"/*/; do
-  pkg="$(basename "$dir")"
-  case "$pkg" in
-    os-*|lib|.git|.github|.claude|.ai-cache) continue ;;
-    *) stow_packages+=("$pkg") ;;
-  esac
-done
-
-# Add OS-only packages (dirs in os-macos/ that have no common counterpart)
-for dir in "$DOTFILES_DIR"/os-macos/*/; do
-  [ -d "$dir" ] || continue
-  pkg="$(basename "$dir")"
-  # Skip non-stow dirs (iterm2-profiles, etc.)
-  [[ "$pkg" == iterm2-profiles ]] && continue
-  # Only add if not already in the list
-  if [ ! -d "$DOTFILES_DIR/$pkg" ]; then
-    stow_packages+=("$pkg")
-  fi
-done
-
-# For each package, check for files that would conflict and back them up
-for pkg in "${stow_packages[@]}"; do
-  pkg_dir="$DOTFILES_DIR/$pkg"
-
-  # Check for OS-specific override
-  if [ -d "$DOTFILES_DIR/os-macos/$pkg" ]; then
-    info "Using os-macos override for $pkg"
-    pkg_dir="$DOTFILES_DIR/os-macos/$pkg"
-  fi
-
-  # Find all files in the package and check for conflicts
-  while IFS= read -r -d '' file; do
-    rel="${file#$pkg_dir/}"
-
-    # ~/.zshrc is intentionally a local bootstrap file (not stowed)
-    if [ "$pkg" = "shell" ] && [ "$rel" = ".zshrc" ]; then
-      continue
-    fi
-
-    target="$HOME/$rel"
-    backup_if_needed "$target"
-  done < <(find "$pkg_dir" -type f -print0)
-done
-
-# Stow each package
-for pkg in "${stow_packages[@]}"; do
-  if [ -d "$DOTFILES_DIR/os-macos/$pkg" ]; then
-    stow --no-folding -d "$DOTFILES_DIR/os-macos" -t "$HOME" "$pkg" || warning "Stow failed for os-macos/$pkg"
-  else
-    stow --no-folding -d "$DOTFILES_DIR" -t "$HOME" "$pkg" || warning "Stow failed for $pkg"
-  fi
-
-  # ~/.zshrc is intentionally local (bootstrap + local markers), not tracked
-  if [ "$pkg" = "shell" ] && [ -L "$HOME/.zshrc" ]; then
-    rm "$HOME/.zshrc"
-    info "Removed stowed ~/.zshrc symlink to keep local bootstrap ownership"
-  fi
-
-  success "Stowed: $pkg"
-done
+dotfiles_stow_packages "${DOTFILES_OS:-macos}"
 
 ensure_zshrc_bootstrap() {
   local zshrc_path="$HOME/.zshrc"
-  local bootstrap_template="$DOTFILES_DIR/shell/.zshrc"
+  local bootstrap_template="$DOTFILES_DIR/templates/zshrc"
 
   # Remove symlinked .zshrc to enforce local bootstrap ownership
   if [ -L "$zshrc_path" ]; then
@@ -367,16 +282,17 @@ if [ -f "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
   success "Tmux plugins installed"
 fi
 
-# Install Claude Code skills (bun is available via Homebrew; npx requires nvm which isn't sourced yet)
-if command -v bunx &>/dev/null; then
-  info "Installing Claude Code skills..."
-  bunx skills add shhac/git-hunk -g -a claude-code -y || warning "Failed to install git-hunk skill"
-  bunx skills add shhac/lin -g -a claude-code -y || warning "Failed to install lin skill"
-  bunx skills add shhac/agent-mongo -g -a claude-code -y || warning "Failed to install agent-mongo skill"
-  bunx skills add shhac/agent-notion -g -a claude-code -y || warning "Failed to install agent-notion skill"
-  success "Claude Code skills installed"
+# Install global skills from the tracked skills lock.
+if [ -f "$DOTFILES_DIR/agents/.agents/.skill-lock.json" ]; then
+  if command -v npx &>/dev/null || command -v bunx &>/dev/null; then
+    info "Installing global agent skills from lock..."
+    "$DOTFILES_DIR/scripts/install-skills-from-lock.sh" "$DOTFILES_DIR/agents/.agents/.skill-lock.json" || warning "Failed to install some global agent skills"
+    success "Global agent skills installed"
+  else
+    warning "npx/bunx not found — skipping global agent skill installation"
+  fi
 else
-  warning "bunx not found — skipping Claude Code skill installation"
+  warning "No tracked skills lock found — skipping global agent skill installation"
 fi
 
 # ─── Done ──────────────────────────────────────────────────────────────────────
