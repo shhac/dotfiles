@@ -7,5 +7,6 @@
 # They are shown below to demonstrate the formatting.
 
 ls log short
+lss log short --stack --no-interactive
 ll log long
 ss submit --stack
