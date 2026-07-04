@@ -55,6 +55,7 @@ brew "yt-dlp"
 
 # Utilities
 brew "nmap"
+brew "shellcheck"
 brew "qrencode"
 brew "upx"
 brew "vhs"
