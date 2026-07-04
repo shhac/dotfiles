@@ -39,5 +39,12 @@ jobs:
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: brew install stow ripgrep
+      # Runner images ship a real ~/.gitconfig and a non-700 ~/.ssh; neither
+      # would exist on a machine that has run setup.sh.
+      - name: Prepare runner HOME (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          rm -f ~/.gitconfig
+          [ ! -d ~/.ssh ] || chmod 700 ~/.ssh
       - name: Run doctor
         run: ./setup.sh --doctor
