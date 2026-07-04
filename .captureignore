@@ -1,0 +1,108 @@
+# Paths (relative to ~) that `./setup.sh --capture` should not report as
+# unmanaged configs. Glob patterns supported. Silencing something here means
+# "we know about it and chose not to track it" — new tools will still surface
+# on their first appearance.
+
+# Candidates we may track later — silenced for now, revisit deliberately
+.claude
+.claude.json
+.config/ccstatusline
+.config/gh
+.config/opencode
+.config/raycast
+.config/zed
+
+# Local bootstrap / override files (by design not stowed; see README)
+.zshrc
+.zshrc.local
+.zprofile.local
+.gitconfig.local
+
+# Legacy shells and misc rc files we don't manage
+.bashrc
+.profile
+.screenrc
+
+# Auth, credentials, and secret-bearing state — never track
+.agent-browser
+.agent-slack
+.aws
+.awsvault
+.config/agent-*
+.config/app.paulie.agent-slack
+.config/gcloud
+.doppler
+.mcp-auth
+.npmrc
+.yarnrc
+.yarnrc.yml
+
+# Installed by setup.sh, not config (plugin managers, frameworks)
+.nvm
+.oh-my-zsh
+.tmux
+.nvim
+.vim
+
+# Shell/OS state, histories, caches, backups
+.*_history
+.cache
+.CFUserTextEncoding
+.claude.json.backup
+.claude.json.bak*
+.config/configstore
+.config/context7
+.config/git
+.config/uv
+.dotfiles-backup
+.DS_Store
+.lesshst
+.local
+.Trash
+.viminfo
+.zcompdump*
+.zsh_sessions
+.zshrc.bak.*
+
+# App state and tool-managed dirs (no hand-written config worth tracking)
+.ai-cache
+.biome
+.bun
+.bundle
+.chatterbox
+.cmuxterm
+.config/AWS*
+.config/fish
+.config/git-wt
+.config/gws
+.config/htop
+.config/iterm2
+.config/lin
+.config/pr-dashboard
+.config/prtea
+.config/tailchat
+.config/thefuck
+.cursor
+.cursor-tutor
+.docker
+.envoy
+.gemini
+.gk
+.grotto
+.homebrew
+.john
+.matplotlib
+.mongodb
+.npm
+.openjfx
+.orbstack
+.pymupdf-venv
+.redocly
+.serverless
+.serverlessrc
+.storybook
+.swiftpm
+.tailchat
+.terraform.d
+.vscode
+.yarn

@@ -19,6 +19,10 @@ while [ "$#" -gt 0 ]; do
       DOTFILES_MODE="doctor"
       shift
       ;;
+    --capture)
+      DOTFILES_MODE="capture"
+      shift
+      ;;
     --stow-only)
       DOTFILES_MODE="stow-only"
       shift
@@ -34,6 +38,7 @@ while [ "$#" -gt 0 ]; do
       echo "  -y, --yes       Non-interactive mode (auto-yes to all prompts)"
       echo "  --stow-only     Only stow configuration packages (optionally name packages)"
       echo "  --doctor        Run repository and machine health checks"
+      echo "  --capture       Report drift: machine changes the repo hasn't captured"
       echo "  -h, --help      Show this help message"
       echo ""
       echo "Detects your OS and runs the appropriate setup."
@@ -50,6 +55,7 @@ export DOTFILES_MODE
 source "$DOTFILES_DIR/lib/utils.sh"
 source "$DOTFILES_DIR/lib/stow.sh"
 source "$DOTFILES_DIR/lib/doctor.sh"
+source "$DOTFILES_DIR/lib/capture.sh"
 
 # Detect OS and delegate
 case "$(uname -s)" in
@@ -72,6 +78,10 @@ esac
 case "$DOTFILES_MODE" in
   doctor)
     dotfiles_doctor "$DOTFILES_OS"
+    exit $?
+    ;;
+  capture)
+    dotfiles_capture "$DOTFILES_OS"
     exit $?
     ;;
   stow-only)
