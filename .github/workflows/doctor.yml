@@ -1,0 +1,43 @@
+name: doctor
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Bash scripts only — shell/.zsh/**, linux/, and wsl2/ hold zsh-sourced
+      # files that shellcheck cannot parse.
+      - name: shellcheck
+        run: |
+          shellcheck -S warning \
+            setup.sh \
+            lib/*.sh \
+            scripts/*.sh \
+            os-linux/setup.sh \
+            os-macos/setup.sh \
+            os-macos/defaults.sh \
+            os-wsl2/setup.sh \
+            os-wsl2/wsl-interop.sh \
+            os-wsl2/x11-setup.sh
+
+  doctor:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y stow ripgrep
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install stow ripgrep
+      - name: Run doctor
+        run: ./setup.sh --doctor
