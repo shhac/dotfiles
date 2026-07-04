@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # macOS Defaults
 
 # Show all files, use column view

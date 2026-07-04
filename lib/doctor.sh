@@ -74,6 +74,11 @@ doctor_check_secret_patterns() {
   local path
 
   info "Checking for obvious secret patterns"
+  if ! command_exists rg; then
+    doctor_fail "rg (ripgrep) is not available; secret scan skipped"
+    return 0
+  fi
+
   for path in "${paths[@]}"; do
     [ -e "$path" ] && existing+=("$path")
   done
@@ -95,7 +100,9 @@ doctor_check_secret_patterns() {
 
 doctor_check_permissions() {
   info "Checking sensitive directory permissions"
+  # shellcheck disable=SC2088
   [ ! -d "$HOME/.ssh" ] || [ "$(stat -f '%Lp' "$HOME/.ssh" 2>/dev/null || stat -c '%a' "$HOME/.ssh" 2>/dev/null)" = "700" ] || doctor_fail "~/.ssh should be chmod 700"
+  # shellcheck disable=SC2088
   [ ! -d "$HOME/.gnupg" ] || [ "$(stat -f '%Lp' "$HOME/.gnupg" 2>/dev/null || stat -c '%a' "$HOME/.gnupg" 2>/dev/null)" = "700" ] || doctor_fail "~/.gnupg should be chmod 700"
 }
 

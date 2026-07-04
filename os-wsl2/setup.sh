@@ -38,6 +38,7 @@ info "Running base Linux setup..."
 LINUX_SETUP="$SCRIPT_DIR/../os-linux/setup.sh"
 if [ -f "$LINUX_SETUP" ]; then
     chmod +x "$LINUX_SETUP"
+    # shellcheck source=os-linux/setup.sh
     source "$LINUX_SETUP" || error_exit "Base Linux setup failed"
     success "Base Linux setup complete"
 else
