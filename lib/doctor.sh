@@ -65,32 +65,15 @@ doctor_check_local_files() {
 }
 
 doctor_check_secret_patterns() {
-  local paths=(
-    "$DOTFILES_DIR"
-    "$HOME/.npmrc"
-    "$HOME/.yarnrc.yml"
-  )
-  local existing=()
-  local path
-
   info "Checking for obvious secret patterns"
   if ! command_exists rg; then
     doctor_fail "rg (ripgrep) is not available; secret scan skipped"
     return 0
   fi
 
-  for path in "${paths[@]}"; do
-    [ -e "$path" ] && existing+=("$path")
-  done
-
-  if [ "${#existing[@]}" -eq 0 ]; then
-    success "No paths to scan"
-    return 0
-  fi
-
-  if rg -l -i --hidden --glob '!.git/**' --glob '!lib/doctor.sh' '(npm_[A-Za-z0-9]{20,}|-----BEGIN .*PRIVATE KEY-----|(api[_-]?key|auth[_-]?token|npmAuthToken|password|secret|credential)\s*[:=]\s*["'\'']?[^"'\'']{8,})' "${existing[@]}" >/tmp/dotfiles-doctor-secret-matches.$$ 2>/dev/null; then
+  if rg -l -i --hidden --glob '!.git/**' --glob '!lib/doctor.sh' '(npm_[A-Za-z0-9]{20,}|-----BEGIN .*PRIVATE KEY-----|(api[_-]?key|auth[_-]?token|npmAuthToken|password|secret|credential)\s*[:=]\s*["'\'']?[^"'\'']{8,})' "$DOTFILES_DIR" >/tmp/dotfiles-doctor-secret-matches.$$ 2>/dev/null; then
     doctor_fail "Potential secret-bearing files found:"
-    sed "s#^$HOME#~#" /tmp/dotfiles-doctor-secret-matches.$$
+    sed "s#^$DOTFILES_DIR#.#" /tmp/dotfiles-doctor-secret-matches.$$
   else
     success "No obvious secret patterns found"
   fi
