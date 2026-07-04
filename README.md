@@ -32,12 +32,13 @@ That's it. The setup script handles everything:
 ./setup.sh --yes
 ```
 
-### Stow-only and doctor modes
+### Stow-only, doctor, and capture modes
 
 ```bash
 ./setup.sh --stow-only          # Stow all packages for this OS
 ./setup.sh --stow-only codex    # Stow one package
 ./setup.sh --doctor             # Check stow, symlinks, secrets, and permissions
+./setup.sh --capture            # Report drift: machine changes the repo hasn't captured
 ```
 
 ## How It Works
@@ -190,6 +191,42 @@ cp ~/.config/toolname/config toolname/.config/toolname/config
 ls -la ~/.config/toolname/config
 ```
 
+## Capturing Drift
+
+Setup moves state one way: repo → machine. But state constantly flows the
+other way — tools edit tracked configs in place (`gh auth setup-git` once
+wrote machine-specific paths into the tracked `.gitconfig`), `brew install`
+happens without the Brewfile hearing about it, and new tools drop config
+dirs the repo has never seen. `--capture` makes noticing that deliberate
+instead of accidental:
+
+```bash
+./setup.sh --capture
+```
+
+It's a **read-only report** (it never commits or modifies anything) covering:
+
+1. **Tracked-file drift** — uncommitted changes to repo files, flagging added
+   lines that look machine-specific (absolute paths, credential blocks) and
+   probably belong in a `.local` override instead
+2. **Brewfile drift, both directions** — entries not installed, and installs
+   not in the Brewfile
+3. **New unmanaged configs** — `$HOME` dotfiles and `~/.config` entries that
+   are neither stow-managed nor listed in `.captureignore`
+4. **Doctor** — runs the full `--doctor` health checks
+
+**When to run it:** after installing new tools, before setting up a new
+machine, or whenever the repo feels stale. Exit code is non-zero when there's
+drift, zero when the repo matches the machine.
+
+**Acting on findings:** commit tracked-file drift with `git hunk`, add
+Brewfile entries by hand into the right curated section (never
+`brew bundle dump --force` — it flattens the section comments), and for each
+new unmanaged config either track it as a stow package (see
+[Adding New Configs](#adding-new-configs)) or silence it in `.captureignore`.
+The ignore file is the memory: anything listed there was seen once and
+deliberately not tracked, so future runs only surface genuinely new things.
+
 ## Updating
 
 After making changes to tracked configs on your machine (they're symlinks, so changes go directly to the repo):
@@ -201,8 +238,5 @@ git commit -m "update: description of changes"
 git push
 ```
 
-To update the Brewfile after installing new packages:
-
-```bash
-brew bundle dump --force --describe --file=~/.dotfiles/Brewfile
-```
+After installing new packages, run `./setup.sh --capture` and add what it
+reports to the appropriate Brewfile section by hand.
