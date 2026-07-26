@@ -1,7 +1,8 @@
 # Taps
-tap "dopplerhq/cli"
+tap "anomalyco/tap"
 tap "hashicorp/tap"
-tap "mongodb/brew"
+tap "homebrew-ffmpeg/ffmpeg"
+tap "nathanbhanji/tap"
 tap "oven-sh/bun"
 tap "shhac/tap"
 tap "manaflow-ai/cmux"
@@ -22,6 +23,7 @@ brew "coreutils"
 # Modern CLI
 brew "ripgrep"
 brew "jq"
+brew "yq"
 brew "htop"
 brew "tealdeer"
 brew "glow"
@@ -31,8 +33,10 @@ brew "thefuck"
 # Development
 brew "uv"
 brew "go"
+brew "golangci-lint"
 brew "zig"
 brew "zls"
+brew "luarocks"
 brew "protobuf@3"
 brew "grpcurl"
 brew "envoy"
@@ -41,16 +45,18 @@ brew "envoy"
 brew "awscli"
 brew "aws-vault"
 brew "hashicorp/tap/terraform"
-brew "dopplerhq/cli/doppler"
+brew "doppler"
 
 # JavaScript / Node
 brew "oven-sh/bun/bun"
 
 # Media
-brew "ffmpeg"
+brew "homebrew-ffmpeg/ffmpeg/ffmpeg"
 brew "imagemagick"
 brew "optipng"
 brew "pngquant"
+brew "potrace"
+brew "svgo"
 brew "yt-dlp"
 
 # Utilities
@@ -73,22 +79,40 @@ brew "shhac/tap/prtea"
 brew "shhac/tap/toss"
 
 # AI agent tools
+brew "shhac/tap/agent-cloudflare"
+brew "shhac/tap/agent-code-review"
+brew "shhac/tap/agent-dd"
+brew "shhac/tap/agent-deepweb"
+brew "shhac/tap/agent-incident"
+brew "shhac/tap/agent-mcp-host"
 brew "shhac/tap/agent-mongo"
 brew "shhac/tap/agent-notion"
+brew "shhac/tap/agent-posthog"
+brew "shhac/tap/agent-postmark"
+brew "shhac/tap/agent-slack"
+brew "shhac/tap/agent-sql"
+brew "shhac/tap/agent-statsig"
+brew "shhac/tap/agent-stripe"
+brew "shhac/tap/agent-vercel"
 brew "shhac/tap/lin"
 brew "agent-browser"
+brew "anomalyco/tap/opencode"
+brew "nathanbhanji/tap/tailchat"
 
 # Other
 brew "john-jumbo"
 brew "icu4c@76"
 brew "presenterm"
 brew "postgresql@14"
+brew "duckdb"
 
 # Casks
 cask "font-fira-code"
 cask "gcloud-cli"
+cask "grotto"
 cask "maccy"
 cask "cmux"
+cask "wombat"
 
 # Mac App Store
 mas "Developer", id: 640199958
@@ -104,6 +128,7 @@ mas "Xcode", id: 497799835
 # Go tools (installed via go install)
 go "fyne.io/fyne/v2/cmd/fyne"
 go "golang.org/x/tools/gopls"
+go "golang.org/x/tools/cmd/goimports"
 go "github.com/goreleaser/goreleaser/v2"
 go "golang.org/x/vuln/cmd/govulncheck"
 go "github.com/fullstorydev/grpcurl/cmd/grpcurl"
