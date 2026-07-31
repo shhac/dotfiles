@@ -79,6 +79,16 @@ else
   success "NVM already installed"
 fi
 
+# uv — Astral's official installer, deliberately not brew, so `uv self update`
+# keeps working. A brew copy would be shadowed by ~/.local/bin on PATH anyway.
+if [ ! -x "$HOME/.local/bin/uv" ]; then
+  info "Installing uv..."
+  curl -LsSf https://astral.sh/uv/install.sh | INSTALLER_NO_MODIFY_PATH=1 sh
+  success "uv installed"
+else
+  success "uv already installed (update with: uv self update)"
+fi
+
 # TPM (Tmux Plugin Manager)
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   info "Installing Tmux Plugin Manager..."

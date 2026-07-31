@@ -31,7 +31,7 @@ brew "diff-so-fancy"
 brew "thefuck"
 
 # Development
-brew "uv"
+# uv is installed by os-macos/setup.sh via Astral's official installer, not brew
 brew "go"
 brew "golangci-lint"
 brew "zig"
