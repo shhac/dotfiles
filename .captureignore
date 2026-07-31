@@ -6,7 +6,6 @@
 # Candidates we may track later — silenced for now, revisit deliberately
 .claude
 .claude.json
-.config/ccstatusline
 .config/gh
 .config/opencode
 .config/raycast

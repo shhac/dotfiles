@@ -12,6 +12,7 @@ cmux
 codex
 graphite
 agents
+ccstatusline
 tmux
 ssh
 

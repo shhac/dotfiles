@@ -1,0 +1,94 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "1",
+        "type": "git-branch",
+        "color": "cyan"
+      },
+      {
+        "id": "2b5ad727-bb92-43e9-968f-0d98a18f2562",
+        "type": "custom-text",
+        "color": "brightBlack",
+        "customText": " "
+      },
+      {
+        "id": "e8ca307e-f148-457d-877a-88d06d24f704",
+        "type": "git-changes"
+      },
+      {
+        "id": "sep-1",
+        "type": "separator"
+      },
+      {
+        "id": "w-ctx",
+        "type": "custom-command",
+        "color": "green",
+        "commandPath": "~/.config/ccstatusline/ctx-widget.sh",
+        "timeout": 3000,
+        "preserveColors": false
+      },
+      {
+        "id": "sep-2",
+        "type": "separator"
+      },
+      {
+        "id": "w-model",
+        "type": "model",
+        "color": "brightBlue",
+        "rawValue": true
+      },
+      {
+        "id": "sp-a",
+        "type": "custom-text",
+        "color": "brightBlack",
+        "customText": " \u00b7 "
+      },
+      {
+        "id": "w-effort",
+        "type": "thinking-effort",
+        "color": "brightBlue",
+        "rawValue": true
+      },
+      {
+        "id": "sep-3",
+        "type": "separator"
+      },
+      {
+        "id": "w-clock",
+        "type": "custom-command",
+        "color": "brightBlack",
+        "commandPath": "date '+%H:%M:%S'",
+        "timeout": 1000,
+        "preserveColors": false
+      }
+    ],
+    [
+      {
+        "id": "eaad9014-7b5d-4954-b8ae-021fa0047c67",
+        "type": "custom-command",
+        "color": "brightBlack",
+        "commandPath": "pwd",
+        "preserveColors": false
+      }
+    ],
+    []
+  ],
+  "flexMode": "full-until-compact",
+  "compactThreshold": 80,
+  "colorLevel": 2,
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      "\ue0b0"
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": []
+  }
+}
