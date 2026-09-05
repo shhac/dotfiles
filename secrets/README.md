@@ -48,6 +48,35 @@ echo 'DOTFILES_PROFILE=work' > ~/.dotfiles-profile.local
 Comma-separated for more than one. A machine that sets nothing gets only
 `common`, so work config never lands somewhere it wasn't asked for.
 
+## Sharing is opt-in: profile names decide it
+
+Profile names are arbitrary, and a config dir may be listed under more than one.
+That makes "do these two machines share this, or not?" a naming decision rather
+than something forced on you:
+
+```
+agent-sql   laptop      # laptop's own connections
+agent-sql   desktop     # desktop's own connections, independent bundle
+agent-dd    shared      # both machines, one bundle
+```
+
+```sh
+# laptop
+echo 'DOTFILES_PROFILE=laptop,shared'  > ~/.dotfiles-profile.local
+# desktop
+echo 'DOTFILES_PROFILE=desktop,shared' > ~/.dotfiles-profile.local
+```
+
+Distinct names give fully independent blobs that can never conflict. A shared
+name gives one blob both machines write — which is what you want for config that
+should stay in step, and is where a conflict can occur. Sealing is a no-op when
+content matches, so a shared profile only churns when it genuinely diverges.
+
+**`--secrets-seal` and drift only ever touch this machine's profiles.** Sealing
+another machine's profile would rewrite its bundle from *this* machine's live
+config — replacing its data rather than conflicting. Name profiles explicitly
+(`./setup.sh --secrets-seal laptop desktop`) if you ever want that.
+
 ## Security, stated plainly
 
 The sealed identity is committed to a **public** repository, and it unlocks
@@ -100,10 +129,11 @@ enough to make every rebuild mismatch its own seal.
   and `agent-slack` keeps work and community workspaces together. Assigning the
   directory to `work` carries all of them. Splitting within a file would mean
   rewriting the tool's own config format, which this deliberately does not do.
-- **No merge story.** Two machines both sealing produces a binary conflict.
-  `.gitattributes` marks the blobs `binary -diff -merge` so it fails loudly
-  rather than corrupting silently; resolve by opening both, merging the
-  plaintext, and re-sealing. Treat one machine as the writer where you can.
+- **A shared profile has no merge story.** Two machines writing the same profile
+  produce a binary conflict. `.gitattributes` marks the blobs
+  `binary -diff -merge` so it fails loudly rather than corrupting silently;
+  resolve by opening both, merging the plaintext, and re-sealing. Give the
+  machines distinct profile names to avoid the situation entirely.
 - **`age` reads passphrases from `/dev/tty` only**, so `./setup.sh --yes` cannot
   unseal. `--secrets-open` decrypts the identity once per run rather than once
   per bundle, so it prompts a single time.

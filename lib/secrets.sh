@@ -309,11 +309,15 @@ dotfiles_secrets_seal() {
   secrets_require_age
   [ -f "$SECRETS_RECIPIENTS" ] || error_exit "no recipients file — run ./setup.sh --secrets-init"
 
+  # This machine's profiles, NOT every profile in profiles.conf. Sealing another
+  # machine's profile would rewrite its bundle from THIS machine's live config,
+  # silently replacing its data rather than conflicting. Name profiles
+  # explicitly (`--secrets-seal work personal`) to override.
   local profiles=("$@")
   if [ "${#profiles[@]}" -eq 0 ]; then
-    mapfile -t profiles < <(secrets_all_profiles)
+    mapfile -t profiles < <(secrets_machine_profiles)
   fi
-  [ "${#profiles[@]}" -gt 0 ] || { warning "No profiles defined in $SECRETS_PROFILES_CONF"; return 0; }
+  [ "${#profiles[@]}" -gt 0 ] || { warning "No profiles for this machine — set DOTFILES_PROFILE in ~/.dotfiles-profile.local"; return 0; }
 
   local profile stage tar_path hash prev count guard_output changed=0
   for profile in "${profiles[@]}"; do
@@ -411,6 +415,8 @@ capture_check_secrets_drift() {
 
   info "Checking sealed agent config for drift"
 
+  # Only this machine's profiles: another machine's bundle legitimately differs
+  # from this machine's config and is not drift.
   local profile stage hash prev found=""
   while IFS= read -r profile; do
     [ -f "$SECRETS_DIR/$profile.sha256" ] || continue
@@ -421,7 +427,7 @@ capture_check_secrets_drift() {
       [ "$hash" != "$prev" ] && found="$found  $profile"$'\n'
     fi
     rm -rf "$stage"
-  done < <(secrets_all_profiles)
+  done < <(secrets_machine_profiles)
 
   if [ -n "$found" ]; then
     capture_drift "Unsealed agent config differs from the repo (run ./setup.sh --secrets-seal):"
