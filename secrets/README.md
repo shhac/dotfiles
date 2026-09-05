@@ -150,9 +150,12 @@ enough to make every rebuild mismatch its own seal.
   `binary -diff -merge` so it fails loudly rather than corrupting silently;
   resolve by opening both, merging the plaintext, and re-sealing. Give the
   machines distinct profile names to avoid the situation entirely.
-- **`age` reads passphrases from `/dev/tty` only**, so `./setup.sh --yes` cannot
-  unseal. `--secrets-open` decrypts the identity once per run rather than once
-  per bundle, so it prompts a single time.
+- **Non-interactive unsealing needs `AGE_PASSPHRASE`.** Plain `age -d` reads
+  from `/dev/tty`, but `age-plugin-batchpass` (shipped with brew's `age`)
+  reads the environment, so `AGE_PASSPHRASE=… ./setup.sh --yes --secrets-open`
+  works. Same scrypt file format either way, so a bundle sealed interactively
+  opens non-interactively and vice versa. Unset the variable afterwards.
+  `--secrets-open` decrypts the identity once per run, not once per bundle.
 
 ## Why this is copied into place, not stowed
 

@@ -204,18 +204,37 @@ secrets_require_age() {
 }
 
 # Decrypt the passphrase-sealed identity once per run and reuse it, so a
-# multi-bundle open prompts once rather than once per bundle. age reads
-# passphrases from /dev/tty only — there is no env var or stdin path.
+# multi-bundle open prompts once rather than once per bundle.
+#
+# `age -p`/`age -d` read a passphrase from /dev/tty only, which would make this
+# unusable under --yes. The age-plugin-batchpass plugin (shipped with brew's
+# age formula) reads AGE_PASSPHRASE from the environment instead, so setting
+# that variable makes the whole flow scriptable. The file format is the same
+# scrypt recipient either way, so a bundle sealed interactively opens in CI and
+# vice versa.
 SECRETS_IDENTITY_TMP=""
-secrets_identity_file() {
-  if [ -n "$SECRETS_IDENTITY_TMP" ] && [ -f "$SECRETS_IDENTITY_TMP" ]; then
-    printf '%s\n' "$SECRETS_IDENTITY_TMP"
+SECRETS_IDENTITY_PATH=""
+
+secrets_cleanup_identity() {
+  [ -n "$SECRETS_IDENTITY_TMP" ] && rm -f "$SECRETS_IDENTITY_TMP"
+  SECRETS_IDENTITY_TMP=""
+}
+
+# Make SECRETS_IDENTITY_PATH usable, decrypting the sealed identity if needed.
+#
+# Sets a global rather than echoing a path: called in a command substitution,
+# the decryption and its cleanup trap would run in a subshell that exits
+# immediately — deleting the temp identity before the caller could read it, and
+# discarding the cache. That silently broke the whole identity.age bootstrap,
+# which is the path a new machine depends on.
+secrets_ensure_identity() {
+  if [ -n "$SECRETS_IDENTITY_PATH" ] && [ -f "$SECRETS_IDENTITY_PATH" ]; then
     return 0
   fi
 
   local plain="${AGE_IDENTITY_FILE:-$HOME/.config/age/keys.txt}"
   if [ -f "$plain" ]; then
-    printf '%s\n' "$plain"
+    SECRETS_IDENTITY_PATH="$plain"
     return 0
   fi
 
@@ -223,16 +242,28 @@ secrets_identity_file() {
 
   SECRETS_IDENTITY_TMP="$(mktemp "${TMPDIR:-/tmp}/dotfiles-age.XXXXXX")"
   chmod 600 "$SECRETS_IDENTITY_TMP"
-  # shellcheck disable=SC2064
-  trap "rm -f '$SECRETS_IDENTITY_TMP'" EXIT INT TERM
+  trap secrets_cleanup_identity EXIT INT TERM
 
-  info "Unlocking the sealed age identity (passphrase required)" >&2
-  if ! age -d -o "$SECRETS_IDENTITY_TMP" "$SECRETS_IDENTITY" >/dev/null; then
-    rm -f "$SECRETS_IDENTITY_TMP"
-    SECRETS_IDENTITY_TMP=""
+  # `age -d` reads a passphrase from /dev/tty only, which would make this
+  # unusable under --yes. age-plugin-batchpass (shipped with brew's age
+  # formula) reads AGE_PASSPHRASE from the environment instead, so setting that
+  # makes the flow scriptable. Same scrypt file format either way, so a bundle
+  # sealed interactively opens non-interactively and vice versa.
+  local -a age_args=(-d -o "$SECRETS_IDENTITY_TMP")
+  if [ -n "${AGE_PASSPHRASE:-}" ] && command_exists age-plugin-batchpass; then
+    age_args+=(-j batchpass)
+    info "Unlocking the sealed age identity from AGE_PASSPHRASE" >&2
+  else
+    info "Unlocking the sealed age identity (passphrase required)" >&2
+  fi
+
+  if ! age "${age_args[@]}" "$SECRETS_IDENTITY" >/dev/null; then
+    secrets_cleanup_identity
     return 1
   fi
-  printf '%s\n' "$SECRETS_IDENTITY_TMP"
+
+  SECRETS_IDENTITY_PATH="$SECRETS_IDENTITY_TMP"
+  return 0
 }
 
 # Ask which profile to use. All prompt UI goes to stderr: the shared
@@ -436,9 +467,9 @@ dotfiles_secrets_open() {
   [ -n "$resolved" ] || return 1
   mapfile -t profiles <<< "$resolved"
 
-  local identity
-  identity="$(secrets_identity_file)" \
+  secrets_ensure_identity \
     || error_exit "no age identity available (run --secrets-init, or place one at ~/.config/age/keys.txt)"
+  local identity="$SECRETS_IDENTITY_PATH"
 
   local root; root="$(secrets_config_root)"
   local profile blob dest rel target opened=0
