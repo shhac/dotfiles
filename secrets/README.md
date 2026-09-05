@@ -39,11 +39,27 @@ a tool that starts writing new state has to be added deliberately.
 ```
 
 A machine opts in by naming its profiles in `~/.dotfiles-profile.local`
-(gitignored):
+(gitignored). On a machine that has none set, `--secrets-open` and
+`--secrets-seal` list the available profiles, ask which to use, and write the
+file for you:
+
+```
+This machine has no profile set.
+Available profiles:
+  1. work
+Select a profile [1-1]:
+```
+
+Or write it directly:
 
 ```sh
 echo 'DOTFILES_PROFILE=work' > ~/.dotfiles-profile.local
 ```
+
+Under `--yes` there is no prompt: it fails with the list of available profiles.
+That is deliberate — the previous behaviour silently fell back to a profile that
+matched no bundle, so a forgotten setting looked like a successful restore of
+nothing.
 
 Comma-separated for more than one. A machine that sets nothing gets only
 `common`, so work config never lands somewhere it wasn't asked for.

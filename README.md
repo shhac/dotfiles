@@ -176,8 +176,10 @@ machine restores config from the repo and re-authenticates each tool separately.
 ```
 
 A machine opts in by naming its profiles in `~/.dotfiles-profile.local`
-(gitignored, comma-separated). One that sets nothing gets only `common`, so work
-config never lands on a machine that did not ask for it.
+(gitignored, comma-separated). You do not have to write it by hand: on a machine
+with no profile set, `--secrets-open` lists what is available, asks, and writes
+the file. Non-interactively it fails with the same list rather than restoring
+nothing and reporting success.
 
 The sealed identity is committed to a public repo and the passphrase is the
 whole of the protection — a leak retroactively decrypts every bundle in git

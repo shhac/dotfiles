@@ -235,6 +235,77 @@ secrets_identity_file() {
   printf '%s\n' "$SECRETS_IDENTITY_TMP"
 }
 
+# Ask which profile to use. All prompt UI goes to stderr: the shared
+# prompt_choice writes its question and options to stdout, so capturing its
+# result in a command substitution swallows the whole menu as the answer.
+secrets_prompt_profile() {
+  local available=("$@")
+  local i reply
+
+  {
+    echo "This machine has no profile set."
+    echo "Available profiles:"
+    for i in "${!available[@]}"; do
+      echo "  $((i + 1)). ${available[i]}"
+    done
+  } >&2
+
+  while true; do
+    printf 'Select a profile [1-%d]: ' "${#available[@]}" >&2
+    read -r reply || return 1
+    if [[ "$reply" =~ ^[0-9]+$ ]] && [ "$reply" -ge 1 ] && [ "$reply" -le "${#available[@]}" ]; then
+      printf '%s\n' "${available[$((reply - 1))]}"
+      return 0
+    fi
+    echo "Please enter a number between 1 and ${#available[@]}." >&2
+  done
+}
+
+# Resolve which profiles this run should act on, asking rather than guessing.
+#
+# Falling back silently to "common" made a forgotten DOTFILES_PROFILE look like
+# success: no bundle matched, --secrets-open printed "skipping", and exited 0.
+# On a new machine that is the difference between restored config and none.
+#
+# Callers must use command substitution and check the status — error_exit here
+# would only kill a process-substitution subshell, letting the caller carry on
+# with an empty list.
+secrets_resolve_profiles() {
+  local explicit=("$@")
+  if [ "${#explicit[@]}" -gt 0 ]; then
+    printf '%s\n' "${explicit[@]}"
+    return 0
+  fi
+
+  if [ -n "${DOTFILES_PROFILE:-}" ] || [ -f "$HOME/.dotfiles-profile.local" ]; then
+    secrets_machine_profiles
+    return 0
+  fi
+
+  local available=()
+  mapfile -t available < <(secrets_all_profiles)
+
+  if [ "${#available[@]}" -eq 0 ]; then
+    warning "No profiles defined — run ./setup.sh --secrets-init first" >&2
+    return 1
+  fi
+
+  if [ "${INTERACTIVE:-true}" = "false" ]; then
+    {
+      warning "This machine has no profile set. Choose from: ${available[*]}"
+      warning "  echo 'DOTFILES_PROFILE=<profile>' > ~/.dotfiles-profile.local"
+    } >&2
+    return 1
+  fi
+
+  local chosen
+  chosen="$(secrets_prompt_profile "${available[@]}")" || return 1
+  printf 'DOTFILES_PROFILE=%s\n' "$chosen" > "$HOME/.dotfiles-profile.local"
+  success "Wrote ~/.dotfiles-profile.local (DOTFILES_PROFILE=$chosen)" >&2
+  info "Edit it to add more, comma-separated." >&2
+  printf '%s\n' "$chosen"
+}
+
 # --- commands ---------------------------------------------------------------
 
 dotfiles_secrets_init() {
@@ -313,11 +384,10 @@ dotfiles_secrets_seal() {
   # machine's profile would rewrite its bundle from THIS machine's live config,
   # silently replacing its data rather than conflicting. Name profiles
   # explicitly (`--secrets-seal work personal`) to override.
-  local profiles=("$@")
-  if [ "${#profiles[@]}" -eq 0 ]; then
-    mapfile -t profiles < <(secrets_machine_profiles)
-  fi
-  [ "${#profiles[@]}" -gt 0 ] || { warning "No profiles for this machine — set DOTFILES_PROFILE in ~/.dotfiles-profile.local"; return 0; }
+  local profiles=() resolved
+  resolved="$(secrets_resolve_profiles "$@")" || return 1
+  [ -n "$resolved" ] || return 1
+  mapfile -t profiles <<< "$resolved"
 
   local profile stage tar_path hash prev count guard_output changed=0
   for profile in "${profiles[@]}"; do
@@ -361,10 +431,10 @@ dotfiles_secrets_seal() {
 dotfiles_secrets_open() {
   secrets_require_age
 
-  local profiles=("$@")
-  if [ "${#profiles[@]}" -eq 0 ]; then
-    mapfile -t profiles < <(secrets_machine_profiles)
-  fi
+  local profiles=() resolved
+  resolved="$(secrets_resolve_profiles "$@")" || return 1
+  [ -n "$resolved" ] || return 1
+  mapfile -t profiles <<< "$resolved"
 
   local identity
   identity="$(secrets_identity_file)" \
@@ -401,6 +471,9 @@ dotfiles_secrets_open() {
 
   if [ "$opened" -gt 0 ]; then
     info "Config restored. Secrets are NOT in the repo — run ./setup.sh --reauth"
+  else
+    warning "Nothing was restored: no bundle matched [${profiles[*]}]."
+    warning "Available: $(secrets_all_profiles | tr '\n' ' ')"
   fi
   return 0
 }
