@@ -116,6 +116,7 @@ cask "font-fira-code"
 cask "gcloud-cli"
 cask "grotto"
 cask "maccy"
+cask "whatsapp"
 cask "cmux"
 cask "wombat"
 
@@ -127,7 +128,6 @@ mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Slack", id: 803453959
 mas "TestFlight", id: 899247664
-mas "WhatsApp", id: 310633997
 mas "Xcode", id: 497799835
 
 # Go tools (installed via go install)
