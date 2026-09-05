@@ -6,81 +6,54 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/lin/SKILL.md",
-      "skillFolderHash": "84e2dd38fd1af4ed38870f64d648e60b3d7e85de",
+      "skillFolderHash": "e39ecfb41760f25d6b54d1442dbd3dc29ae0436a",
       "installedAt": "2026-02-10T15:04:13.268Z",
-      "updatedAt": "2026-07-29T12:19:22.009Z"
+      "updatedAt": "2026-08-31T22:27:43.710Z"
     },
     "agent-mongo": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-mongo/SKILL.md",
-      "skillFolderHash": "92148449486859da1f45db423a283e0c961d8137",
+      "skillFolderHash": "4c45914f332f7af8bc28c3594dee9705530dd73a",
       "installedAt": "2026-02-11T20:57:39.641Z",
-      "updatedAt": "2026-07-31T10:25:14.974Z"
-    },
-    "team-solve": {
-      "source": "shhac/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/shhac/skills.git",
-      "skillPath": "skills/team-solve/SKILL.md",
-      "skillFolderHash": "ddeb5362f519f1f9f66662c91e3faaaa227dd686",
-      "installedAt": "2026-02-12T12:40:06.081Z",
-      "updatedAt": "2026-07-07T09:40:11.136Z"
+      "updatedAt": "2026-09-03T09:59:12.571Z"
     },
     "competing-hypotheses": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/competing-hypotheses/SKILL.md",
-      "skillFolderHash": "3a94401e711b821f8b083b7164642521f5239469",
+      "skillFolderHash": "0eb8ce42bfd8c4f133925456136c1eee9230c171",
       "installedAt": "2026-02-12T12:40:06.114Z",
-      "updatedAt": "2026-07-07T09:40:11.128Z"
-    },
-    "multi-review": {
-      "source": "shhac/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/shhac/skills.git",
-      "skillPath": "skills/multi-review/SKILL.md",
-      "skillFolderHash": "9a343fd7d079f53bfb931b8978df8d8848485849",
-      "installedAt": "2026-02-12T12:40:06.147Z",
-      "updatedAt": "2026-07-07T09:40:11.130Z"
-    },
-    "orchestrate-subagents": {
-      "source": "shhac/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/shhac/skills.git",
-      "skillPath": "skills/orchestrate-subagents/SKILL.md",
-      "skillFolderHash": "cd76659d1415388ec03b8915047f05fdc47319eb",
-      "installedAt": "2026-02-12T12:40:06.179Z",
-      "updatedAt": "2026-07-07T09:40:11.131Z"
+      "updatedAt": "2026-08-31T21:40:02.271Z"
     },
     "agent-notion": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-notion/SKILL.md",
-      "skillFolderHash": "7bc558ed4d44e4af9fd6770c69dd43c668d0aadf",
+      "skillFolderHash": "828037794a3c618e2b7d9c361e9bd12c2bb802f8",
       "installedAt": "2026-02-18T15:14:49.402Z",
-      "updatedAt": "2026-07-29T12:19:22.004Z"
+      "updatedAt": "2026-08-31T22:27:45.035Z"
     },
     "git-hunk": {
-      "source": "shhac/git-hunk",
+      "source": "shhac/agent-skills",
       "sourceType": "github",
-      "sourceUrl": "https://github.com/shhac/git-hunk.git",
+      "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/git-hunk/SKILL.md",
-      "skillFolderHash": "766387d390a615da669c6f26dd0bbafc5d2a01d8",
+      "skillFolderHash": "c8843f5687198a25a8e1b38757d47c04507b347e",
       "installedAt": "2026-02-25T18:20:23.673Z",
-      "updatedAt": "2026-07-04T19:55:42.730Z"
+      "updatedAt": "2026-08-31T21:39:39.023Z"
     },
     "brainstorm": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/brainstorm/SKILL.md",
-      "skillFolderHash": "cd3e485d54d1c2602b6680c1585610811d1eba67",
+      "skillFolderHash": "02d8df624b90230dac9ad907816b8a03ad7619cd",
       "installedAt": "2026-02-27T10:44:20.996Z",
-      "updatedAt": "2026-07-07T09:40:11.124Z"
+      "updatedAt": "2026-08-31T21:40:03.827Z"
     },
     "gws-docs": {
       "source": "googleworkspace/cli",
@@ -249,63 +222,63 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/dotfiles-mac/SKILL.md",
-      "skillFolderHash": "e6ed043782c14ed05e395d1cfc9d2bf2c5496629",
+      "skillFolderHash": "25c3297c8c4b57246987019bbe1d712a9b9ab770",
       "installedAt": "2026-03-07T14:01:17.688Z",
-      "updatedAt": "2026-07-07T09:40:11.129Z"
+      "updatedAt": "2026-08-31T21:40:05.413Z"
     },
     "sync-fork": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/sync-fork/SKILL.md",
-      "skillFolderHash": "c8665dbd9b7a5876505cf9c220a1be0f5d272c8e",
+      "skillFolderHash": "65a18520f8afa20af57657989b897c0856da0395",
       "installedAt": "2026-03-07T14:01:18.573Z",
-      "updatedAt": "2026-07-07T09:40:11.135Z"
+      "updatedAt": "2026-08-31T21:40:07.078Z"
     },
     "restack": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/restack/SKILL.md",
-      "skillFolderHash": "4f44c92a81448b4730183bec1faebd569920ab84",
+      "skillFolderHash": "0a029fe42188ca74c7eeedc42e7dc9a76a63fd2a",
       "installedAt": "2026-03-14T16:56:46.218Z",
-      "updatedAt": "2026-07-07T09:40:11.134Z"
+      "updatedAt": "2026-08-31T21:40:09.055Z"
     },
     "image-to-svg": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/image-to-svg/SKILL.md",
-      "skillFolderHash": "7008deb50bb2bb0d919a91980b3f23697015889a",
+      "skillFolderHash": "92230b32194c06daf073e306aa6e05f5aa0f0d1a",
       "installedAt": "2026-03-16T18:34:37.495Z",
-      "updatedAt": "2026-07-07T09:40:11.129Z"
+      "updatedAt": "2026-08-31T21:40:10.753Z"
     },
     "agent-sql": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-sql/SKILL.md",
-      "skillFolderHash": "285e99f926eebd99afd5b06eb92cd64189302153",
+      "skillFolderHash": "dcd0f72e478d5f58a818f63861e8598e48e99491",
       "installedAt": "2026-03-27T15:31:14.592Z",
-      "updatedAt": "2026-07-29T12:19:22.008Z"
+      "updatedAt": "2026-08-31T21:39:40.789Z"
     },
     "ask-me-about": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/ask-me-about/SKILL.md",
-      "skillFolderHash": "2c7c6b2eb122f75cf0e2091576772b0e6c1c3d40",
+      "skillFolderHash": "8b7c3373a1d67adb97070a17c6afa21df9a7fee6",
       "installedAt": "2026-03-28T16:59:29.746Z",
-      "updatedAt": "2026-07-07T09:40:11.124Z"
+      "updatedAt": "2026-08-31T21:40:12.187Z"
     },
     "improve-code-structure": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/improve-code-structure/SKILL.md",
-      "skillFolderHash": "d8429a097caea8a45cc2fce1a3d23f5df27eda93",
+      "skillFolderHash": "aa393452fb839f0db1467f2229ca5a17d4c221ed",
       "installedAt": "2026-03-28T16:59:31.492Z",
-      "updatedAt": "2026-07-07T09:40:11.130Z"
+      "updatedAt": "2026-08-31T21:40:13.781Z"
     },
     "agent-statsig": {
       "source": "shhac/agent-skills",
@@ -314,16 +287,16 @@
       "skillPath": "skills/agent-statsig/SKILL.md",
       "skillFolderHash": "337889419aaa09263dfa085e967d0892e29cad11",
       "installedAt": "2026-03-31T16:16:53.414Z",
-      "updatedAt": "2026-07-29T12:19:22.008Z"
+      "updatedAt": "2026-08-17T10:16:56.628Z"
     },
     "agent-dd": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-dd/SKILL.md",
-      "skillFolderHash": "e12667ee28f102c451e94d6781be2f145d5e8680",
+      "skillFolderHash": "74a60d27ada4ae5d9db99e53174b4c82da076883",
       "installedAt": "2026-04-01T13:42:36.431Z",
-      "updatedAt": "2026-07-29T12:19:22.000Z"
+      "updatedAt": "2026-08-17T10:16:56.129Z"
     },
     "agent-incident": {
       "source": "shhac/agent-skills",
@@ -332,142 +305,142 @@
       "skillPath": "skills/agent-incident/SKILL.md",
       "skillFolderHash": "cabd39ffb406d088d3ab33aaa2b7d5b88087610a",
       "installedAt": "2026-04-09T13:42:21.222Z",
-      "updatedAt": "2026-07-29T12:19:22.001Z"
+      "updatedAt": "2026-08-17T10:16:56.290Z"
     },
     "agent-deepweb": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-deepweb/SKILL.md",
-      "skillFolderHash": "2cbb164de73d140ffbc3e77c31ac55c0fbcd35eb",
+      "skillFolderHash": "9525a0b514161b420eafc5ff2a1c3ca68f7d081e",
       "installedAt": "2026-04-24T10:31:12.599Z",
-      "updatedAt": "2026-07-29T12:19:22.001Z"
+      "updatedAt": "2026-08-31T21:39:42.759Z"
     },
     "repeat-until-settled": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/repeat-until-settled/SKILL.md",
-      "skillFolderHash": "dd3ee9600f0582d88705a5271d80cbe0074d9779",
+      "skillFolderHash": "7ee4e83f5a5d76ec778d2c05f7543d078ecc3a02",
       "installedAt": "2026-05-09T15:42:44.061Z",
-      "updatedAt": "2026-07-07T09:40:11.133Z"
+      "updatedAt": "2026-08-31T21:40:15.274Z"
     },
     "quotespeak": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/quotespeak/SKILL.md",
-      "skillFolderHash": "1e0792456568bc3d9322603f769f985193ed8b14",
+      "skillFolderHash": "a6322a652083f4ac1708bb20ca4b7b5bc3b8b73e",
       "installedAt": "2026-05-13T14:11:08.765Z",
-      "updatedAt": "2026-07-07T09:40:11.132Z"
+      "updatedAt": "2026-08-31T21:40:17.223Z"
     },
     "seam-audit": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/seam-audit/SKILL.md",
-      "skillFolderHash": "8ad65964a4c0d90244751b23e7148d7aa9717032",
+      "skillFolderHash": "6753e5bb5440aa653128c5018156e913b1b18f79",
       "installedAt": "2026-05-25T01:18:33.504Z",
-      "updatedAt": "2026-07-07T09:40:11.135Z"
+      "updatedAt": "2026-08-31T21:40:19.906Z"
     },
     "agent-stripe": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-stripe/SKILL.md",
-      "skillFolderHash": "808e73b9485a843c2ce8d4541902018c96678acd",
+      "skillFolderHash": "4d9ec812e32e84537723549a2fb45ca75a07c3de",
       "installedAt": "2026-05-30T23:44:07.203Z",
-      "updatedAt": "2026-07-29T12:19:22.009Z"
+      "updatedAt": "2026-08-31T21:39:44.871Z"
     },
     "agent-postmark": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-postmark/SKILL.md",
-      "skillFolderHash": "c25365b6f7061c8f6f7edde0a5afa34676eae5e6",
+      "skillFolderHash": "a6992ff1d9b89e14ef4e186e7228ae6a875c0e8f",
       "installedAt": "2026-05-31T13:06:37.452Z",
-      "updatedAt": "2026-07-29T12:19:22.007Z"
+      "updatedAt": "2026-08-31T21:39:46.406Z"
     },
     "agent-cloudflare": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-cloudflare/SKILL.md",
-      "skillFolderHash": "09ee240bc4df38534733cbe1d718c501399cd0c9",
+      "skillFolderHash": "204be5e17f84a7856ee27f8a03263b77d48a613c",
       "installedAt": "2026-05-31T13:06:46.734Z",
-      "updatedAt": "2026-07-29T12:19:21.999Z"
+      "updatedAt": "2026-08-31T21:39:48.237Z"
     },
     "pr-issue-review": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/pr-issue-review/SKILL.md",
-      "skillFolderHash": "f7bd4647e512fb6be4d6fe3b3e5749ac8ddcaaaf",
+      "skillFolderHash": "dd7987c152fddf2287e6d1286604d3023a63cbf2",
       "installedAt": "2026-06-09T11:51:42.638Z",
-      "updatedAt": "2026-07-24T16:03:51.808Z"
+      "updatedAt": "2026-08-31T21:40:21.568Z"
     },
     "agent-slack": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-slack/SKILL.md",
-      "skillFolderHash": "35bc218b3875429b684d1689630a76084bcdc779",
+      "skillFolderHash": "480709602aa1fab5875b265e183163a5b02323b6",
       "installedAt": "2026-06-12T23:53:15.666Z",
-      "updatedAt": "2026-07-29T12:19:22.007Z"
+      "updatedAt": "2026-08-31T22:27:46.358Z"
     },
     "agent-vercel": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-vercel/SKILL.md",
-      "skillFolderHash": "2abba12e901153f72de33271558498ef9dafb050",
+      "skillFolderHash": "f88115e8ab4b6c86ae3768bcbf010a082f8eea5d",
       "installedAt": "2026-06-17T22:46:35.501Z",
-      "updatedAt": "2026-07-29T12:19:22.009Z"
+      "updatedAt": "2026-08-31T22:27:47.663Z"
     },
     "use-codex": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/use-codex/SKILL.md",
-      "skillFolderHash": "8df106d9c05c8c2b05c95b4d18199912a2a13f46",
+      "skillFolderHash": "4e0154bbe313703658ee9d1c21333b17a18ce782",
       "installedAt": "2026-07-04T17:52:54.051Z",
-      "updatedAt": "2026-07-30T14:36:36.311Z"
+      "updatedAt": "2026-08-31T21:40:22.978Z"
     },
     "create-profile-atlas": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/create-profile-atlas/SKILL.md",
-      "skillFolderHash": "a923ab31720182a73c5b8a4aed1199bbe60e5f84",
+      "skillFolderHash": "69d36809f1e52f03c4185c0627f4b587e71f712d",
       "installedAt": "2026-07-07T09:40:11.128Z",
-      "updatedAt": "2026-07-07T09:40:11.128Z"
+      "updatedAt": "2026-08-31T21:40:24.345Z"
     },
     "agent-mcp-host": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-mcp-host/SKILL.md",
-      "skillFolderHash": "5dfa55cc46c0d3022502aaecda302c49ec680db6",
+      "skillFolderHash": "9839d87d2b0d2178069b7829f0a1d5e42200cb75",
       "installedAt": "2026-07-07T13:36:40.246Z",
-      "updatedAt": "2026-07-29T12:19:22.002Z"
+      "updatedAt": "2026-08-31T21:39:53.055Z"
     },
     "agent-posthog": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-posthog/SKILL.md",
-      "skillFolderHash": "51a92baf7733fcc1412e86a4c5f69bd814981c43",
+      "skillFolderHash": "de353709d0eabdb9fcb6ab19f046d4673f346b82",
       "installedAt": "2026-07-07T13:36:40.247Z",
-      "updatedAt": "2026-07-29T12:19:22.006Z"
+      "updatedAt": "2026-08-31T21:39:54.546Z"
     },
     "agent-code-review": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-code-review/SKILL.md",
-      "skillFolderHash": "545c5791d37c3d80082ee6801f93f053b7cc1f3e",
+      "skillFolderHash": "08386e0f2c224a9509520bff11aa28a55068062e",
       "installedAt": "2026-07-08T10:58:49.334Z",
-      "updatedAt": "2026-07-29T12:19:22.000Z"
+      "updatedAt": "2026-09-04T11:48:10.186Z"
     },
     "slide-builder": {
       "source": "stampedeapp/ai-tools",
@@ -501,27 +474,81 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/ayghri/i-have-adhd.git",
       "skillPath": "skills/i-have-adhd/SKILL.md",
-      "skillFolderHash": "5f9aed51e473d34f38962ac270ada0b1e3ff2a4a",
+      "skillFolderHash": "871e88cbe9b167670c170c53c8173c68609a2ae9",
       "installedAt": "2026-07-22T10:10:12.442Z",
-      "updatedAt": "2026-07-22T10:10:12.442Z"
+      "updatedAt": "2026-08-12T12:54:38.768Z"
     },
     "agent-dlocal": {
       "source": "shhac/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/agent-skills.git",
       "skillPath": "skills/agent-dlocal/SKILL.md",
-      "skillFolderHash": "285a8ffcfb9ec7b1d12134200e1c3c0d242fe110",
+      "skillFolderHash": "8f69b7d58fd721d255c85137f6067199973ab00f",
       "installedAt": "2026-07-29T12:19:22.001Z",
-      "updatedAt": "2026-07-29T12:19:22.001Z"
+      "updatedAt": "2026-08-31T21:39:57.530Z"
     },
     "firestop": {
       "source": "shhac/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/firestop/SKILL.md",
-      "skillFolderHash": "a2951f74ce08d78cefe3ff99029354a9f9341fb0",
+      "skillFolderHash": "5370cb743c90bec3c6575e7e4e979cdf54f0f6bc",
       "installedAt": "2026-07-30T11:24:20.462Z",
-      "updatedAt": "2026-07-30T14:36:37.900Z"
+      "updatedAt": "2026-08-31T21:40:25.747Z"
+    },
+    "agent-fathom": {
+      "source": "shhac/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shhac/agent-skills.git",
+      "skillPath": "skills/agent-fathom/SKILL.md",
+      "skillFolderHash": "6ba7cee553abc25de5fb70ae7052af997d47e95e",
+      "installedAt": "2026-08-07T13:10:09.719Z",
+      "updatedAt": "2026-08-31T21:39:58.999Z"
+    },
+    "g2g": {
+      "source": "shhac/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shhac/agent-skills.git",
+      "skillPath": "skills/g2g/SKILL.md",
+      "skillFolderHash": "bbe0fdfa5a70bb1755aa51bdcb448fc15c4426bc",
+      "installedAt": "2026-08-17T10:16:56.738Z",
+      "updatedAt": "2026-08-31T21:40:00.446Z"
+    },
+    "lucid-doc": {
+      "source": "shhac/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shhac/skills.git",
+      "skillPath": "skills/lucid-doc/SKILL.md",
+      "skillFolderHash": "b60aa5f8d5d7a81daa3865b9ee5031ed4c7cae62",
+      "installedAt": "2026-08-19T12:59:50.645Z",
+      "updatedAt": "2026-09-01T00:00:54.754Z"
+    },
+    "use-claude": {
+      "source": "shhac/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shhac/skills.git",
+      "skillPath": "skills/use-claude/SKILL.md",
+      "skillFolderHash": "53494f277c64fd04f2292c0648511979ee879f24",
+      "installedAt": "2026-08-19T12:59:50.653Z",
+      "updatedAt": "2026-08-31T21:40:27.152Z"
+    },
+    "lucid": {
+      "source": "shhac/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shhac/skills.git",
+      "skillPath": "skills/lucid/SKILL.md",
+      "skillFolderHash": "2cb18b809a2e9720640aa6d02d0cfee92e800b65",
+      "installedAt": "2026-08-19T13:06:06.027Z",
+      "updatedAt": "2026-09-01T00:00:56.445Z"
+    },
+    "agent-motion": {
+      "source": "shhac/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shhac/agent-skills.git",
+      "skillPath": "skills/agent-motion/SKILL.md",
+      "skillFolderHash": "469adb086f7701aa89fb66a2e916c155dc2cc5ff",
+      "installedAt": "2026-08-31T21:43:53.884Z",
+      "updatedAt": "2026-08-31T21:46:37.340Z"
     }
   },
   "dismissed": {
