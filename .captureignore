@@ -16,6 +16,7 @@
 .zshrc.local
 .zprofile.local
 .gitconfig.local
+.dotfiles-profile.local
 
 # Legacy shells and misc rc files we don't manage
 .bashrc
