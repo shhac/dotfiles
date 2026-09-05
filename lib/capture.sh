@@ -151,6 +151,7 @@ dotfiles_capture() {
   capture_check_repo_drift
   capture_check_brewfile
   capture_check_untracked_configs "$os"
+  capture_check_secrets_drift
 
   dotfiles_doctor "$os" || capture_status=1
 

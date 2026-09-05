@@ -8,6 +8,7 @@ export DOTFILES_DIR
 export INTERACTIVE="true"
 DOTFILES_MODE="full"
 STOW_ONLY_PACKAGES=()
+SECRETS_PROFILE_ARGS=()
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -31,6 +32,22 @@ while [ "$#" -gt 0 ]; do
         shift
       done
       ;;
+    --secrets-init)
+      DOTFILES_MODE="secrets-init"
+      shift
+      ;;
+    --secrets-seal|--secrets-open)
+      [ "$1" = "--secrets-seal" ] && DOTFILES_MODE="secrets-seal" || DOTFILES_MODE="secrets-open"
+      shift
+      while [ "$#" -gt 0 ] && [[ "$1" != -* ]]; do
+        SECRETS_PROFILE_ARGS+=("$1")
+        shift
+      done
+      ;;
+    --reauth)
+      DOTFILES_MODE="reauth"
+      shift
+      ;;
     -h|--help)
       echo "Usage: ./setup.sh [options]"
       echo ""
@@ -39,6 +56,10 @@ while [ "$#" -gt 0 ]; do
       echo "  --stow-only     Only stow configuration packages (optionally name packages)"
       echo "  --doctor        Run repository and machine health checks"
       echo "  --capture       Report drift: machine changes the repo hasn't captured"
+      echo "  --secrets-init  Create the age identity and seal it for bootstrap"
+      echo "  --secrets-seal  Encrypt agent-* config into secrets/ (only if changed)"
+      echo "  --secrets-open  Decrypt agent-* config for this machine's profiles"
+      echo "  --reauth        List agent-* profiles whose secrets need re-authenticating"
       echo "  -h, --help      Show this help message"
       echo ""
       echo "Detects your OS and runs the appropriate setup."
@@ -56,6 +77,7 @@ source "$DOTFILES_DIR/lib/utils.sh"
 source "$DOTFILES_DIR/lib/stow.sh"
 source "$DOTFILES_DIR/lib/doctor.sh"
 source "$DOTFILES_DIR/lib/capture.sh"
+source "$DOTFILES_DIR/lib/secrets.sh"
 
 # Detect OS and delegate
 case "$(uname -s)" in
@@ -86,6 +108,22 @@ case "$DOTFILES_MODE" in
     ;;
   stow-only)
     dotfiles_stow_packages "$DOTFILES_OS" "${STOW_ONLY_PACKAGES[@]}"
+    exit $?
+    ;;
+  secrets-init)
+    dotfiles_secrets_init
+    exit $?
+    ;;
+  secrets-seal)
+    dotfiles_secrets_seal "${SECRETS_PROFILE_ARGS[@]}"
+    exit $?
+    ;;
+  secrets-open)
+    dotfiles_secrets_open "${SECRETS_PROFILE_ARGS[@]}"
+    exit $?
+    ;;
+  reauth)
+    dotfiles_reauth
     exit $?
     ;;
 esac

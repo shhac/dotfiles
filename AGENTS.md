@@ -119,5 +119,11 @@ stow -D -t $HOME shell              # Unstow a package
 - `lib/stow.sh` owns package manifest parsing, conflict backups, and stow application
 - `lib/doctor.sh` owns `./setup.sh --doctor`
 - `lib/capture.sh` owns `./setup.sh --capture` (read-only drift report; `.captureignore` silences known-untracked configs)
+- `lib/secrets.sh` owns `--secrets-init/-seal/-open` and `--reauth`: age-encrypted, profile-scoped `agent-*` config bundles in `secrets/`
 - All setup scripts are idempotent (safe to re-run)
 - Secrets are never tracked — `.gitignore` covers keys, tokens, and `.local` files
+- `agent-*` config IS tracked, age-encrypted, in `secrets/` — but it contains no
+  credentials (the family keeps those in the OS keychain behind a `__KEYCHAIN__`
+  marker). It is copied into place, never stowed: those CLIs write atomically
+  via `rename`, which would replace a stow symlink and leave the repo stale.
+  See `secrets/README.md`.

@@ -3,10 +3,16 @@
 *.local.vim
 .local/
 
-# Decrypted secrets (age encryption)
-# Add specific decrypted filenames here if using age:
-# id_ed25519
-# id_ed25519.pub
+# Decrypted agent-* config bundles (see lib/secrets.sh).
+# The sealed .age blobs and their .sha256 hashes ARE tracked; the plaintext
+# working copies never are. *.local / .local/ above do not match this path.
+secrets/.open/
+
+# An age identity must never land in the repo. The only key material tracked
+# is secrets/identity.age (passphrase-sealed) and secrets/recipients.txt
+# (public keys, safe to commit).
+keys.txt
+*.agekey
 
 # Secrets & keys
 id_*

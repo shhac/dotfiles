@@ -158,11 +158,31 @@ Personal skill source lives outside this repo, in the sibling `../skills` repo.
 
 ## Secrets
 
-Secrets are not tracked. The repo includes `age` in the Brewfile and ignores
-common decrypted secret filenames, but there is no automatic secret encryption
-workflow yet. Files such as `.npmrc`, `.yarnrc`, `.yarnrc.yml`, `.netrc`, cloud
-credentials, tokens, and `.local` overrides should stay untracked unless they are
-sanitized or deliberately encrypted.
+No credential is tracked, encrypted or otherwise. Files such as `.npmrc`,
+`.yarnrc`, `.yarnrc.yml`, `.netrc`, cloud credentials, tokens, and `.local`
+overrides stay untracked.
+
+`agent-*` CLI **configuration** is the one thing that is carried between
+machines, encrypted with `age` into profile-scoped bundles under `secrets/`.
+Those bundles hold no secrets — the family keeps real credentials in the OS
+keychain and writes only a `__KEYCHAIN__` marker into its config — so a new
+machine restores config from the repo and re-authenticates each tool separately.
+
+```sh
+./setup.sh --secrets-init    # once per identity: generate and seal the age key
+./setup.sh --secrets-seal    # after changing agent-* config
+./setup.sh --secrets-open    # on a new machine, for its profiles
+./setup.sh --reauth          # list profiles that still need a credential
+```
+
+A machine opts in by naming its profiles in `~/.dotfiles-profile.local`
+(gitignored, comma-separated). One that sets nothing gets only `common`, so work
+config never lands on a machine that did not ask for it.
+
+The sealed identity is committed to a public repo and the passphrase is the
+whole of the protection — a leak retroactively decrypts every bundle in git
+history, and cannot be rotated. Use a long generated passphrase. See
+[`secrets/README.md`](secrets/README.md) for the full rationale and limits.
 
 ## After Setup
 
@@ -172,6 +192,7 @@ These steps require manual action:
 - [ ] Copy SSH keys to `~/.ssh/` and `chmod 600 ~/.ssh/id_*`
 - [ ] Sign into Mac App Store (for `mas` packages)
 - [ ] Authenticate: `gh auth login`, `npm login`, `gt auth`
+- [ ] Restore agent-* config: `./setup.sh --secrets-open`, then `./setup.sh --reauth`
 - [ ] Edit `~/.zshrc.local`, `~/.gitconfig.local`, `~/.ssh/config.local` for machine-specific config
 - [ ] Review macOS defaults: `./setup.sh macos`
 

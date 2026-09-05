@@ -28,13 +28,19 @@
 .rustup
 .zshenv
 
+# Tracked via secrets/ bundles — drift is checked by content hash, not by path
+# (see lib/secrets.sh). These dirs hold no secrets: the agent-* family keeps
+# real credentials in the OS keychain and writes only a __KEYCHAIN__ sentinel
+# here. Listed so capture stays quiet about paths it already covers by hash.
+.config/agent-*
+.config/app.paulie.agent-slack
+
 # Auth, credentials, and secret-bearing state — never track
 .agent-browser
 .agent-slack
 .aws
 .awsvault
-.config/agent-*
-.config/app.paulie.agent-slack
+.config/age
 .config/gcloud
 .doppler
 .mcp-auth

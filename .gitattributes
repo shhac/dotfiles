@@ -1,0 +1,4 @@
+# Sealed config bundles are opaque binaries. A two-machine conflict must fail
+# loudly rather than silently produce a corrupt blob: unseal both sides, merge
+# the plaintext, then re-seal.
+secrets/*.age binary -diff -merge
