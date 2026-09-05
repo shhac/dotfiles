@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "lines": [
     [
       {
@@ -43,7 +43,7 @@
         "id": "sp-a",
         "type": "custom-text",
         "color": "brightBlack",
-        "customText": " \u00b7 "
+        "customText": " · "
       },
       {
         "id": "w-effort",
@@ -83,7 +83,7 @@
   "powerline": {
     "enabled": false,
     "separators": [
-      "\ue0b0"
+      ""
     ],
     "separatorInvertBackground": [
       false
