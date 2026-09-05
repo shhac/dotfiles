@@ -65,6 +65,21 @@ Use a long generated passphrase. This is a requirement, not advice.
 What this does *not* risk: no credential is in here, so a compromise discloses
 infrastructure shape (hostnames, org IDs, workspace URLs), not access.
 
+## The seal-time guard
+
+`--secrets-seal` refuses to encrypt anything that looks like a live credential:
+known prefixes (`xoxc-`, `sk_live_`, `ghp_`, `AKIA…`, JWTs, PEM private keys)
+and any secret-named field holding a long opaque string where the tools would
+normally have left a `__KEYCHAIN__` marker. It reports key paths, never values.
+
+This exists because "these files contain no secrets" is a property of the tools
+as they behave today, not a guarantee. A future version storing a token inline
+would otherwise reach a public repo, where exposure cannot be undone. The
+one-off audit that justified this design is now a standing check.
+
+It deliberately ignores `connections.<name>.credential`: in this family that
+field names a credential *alias* to look up, not the credential itself.
+
 ## Why a content hash, not a hash of the blob
 
 `age` is nondeterministic per invocation: sealing identical input twice gives

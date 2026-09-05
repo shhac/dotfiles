@@ -121,6 +121,84 @@ secrets_archive() {
   (cd "$stage" && printf '%s\n' "$members" | COPYFILE_DISABLE=1 tar cf - -T -) | gzip -n
 }
 
+# Refuse to seal anything that looks like a live credential.
+#
+# The family stores secrets in the keychain and writes only a __KEYCHAIN__
+# marker, which is why these bundles are safe to publish — but that is a
+# property of the tools today, not a guarantee. A future version storing a
+# token inline would otherwise sail into a public repo, where the exposure is
+# permanent. This is the standing check that the one-off audit was.
+#
+# Prints key paths only, never values.
+secrets_scan_for_plaintext_secrets() {
+  local stage="$1"
+  python3 - "$stage" <<'PYEOF'
+import json, os, re, sys
+
+stage = sys.argv[1]
+SENTINEL = "__KEYCHAIN__"
+
+# Well-known credential prefixes, plus JWTs and PEM private keys.
+SHAPES = [
+    (re.compile(r"^xox[abcdeprs]-"), "Slack token"),
+    (re.compile(r"^(sk|rk|pk)_(live|test)_"), "Stripe key"),
+    (re.compile(r"^(ghp|gho|ghu|ghs|ghr)_"), "GitHub token"),
+    (re.compile(r"^github_pat_"), "GitHub fine-grained PAT"),
+    (re.compile(r"^AKIA[0-9A-Z]{16}$"), "AWS access key id"),
+    (re.compile(r"^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\."), "JWT"),
+    (re.compile(r"BEGIN [A-Z ]*PRIVATE KEY"), "private key"),
+    (re.compile(r"^phc_[A-Za-z0-9]{20,}"), "PostHog key"),
+    (re.compile(r"^dop_v1_"), "Doppler token"),
+]
+
+# Leaf names that hold a secret VALUE. Deliberately excludes "credential":
+# in this family `connections.<name>.credential` names a credential alias to
+# look up, not the credential itself, so including it flags every connection.
+SECRET_KEYS = ("password", "token", "secret", "api_key", "apikey", "app_key",
+               "console_key", "client_key", "cookie", "passphrase", "blob",
+               "private_key")
+
+findings = []
+
+def inspect(value, trail, rel):
+    if not isinstance(value, str) or value == SENTINEL or not value:
+        return
+    for pattern, what in SHAPES:
+        if pattern.search(value):
+            findings.append((rel, ".".join(trail), what))
+            return
+    leaf = trail[-1].lower() if trail else ""
+    # A secret-named field holding a long opaque string, where the tools would
+    # normally have left a sentinel.
+    if any(t in leaf for t in SECRET_KEYS) and len(value) >= 20 \
+            and re.fullmatch(r"[A-Za-z0-9_\-\.+/=]+", value):
+        findings.append((rel, ".".join(trail), "unsentinelled secret-shaped field"))
+
+def walk(node, trail, rel):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            walk(v, trail + [k], rel)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            walk(v, trail + [str(i)], rel)
+    else:
+        inspect(node, trail, rel)
+
+for root, _, files in os.walk(stage):
+    for name in sorted(files):
+        full = os.path.join(root, name)
+        rel = os.path.relpath(full, stage)
+        try:
+            walk(json.load(open(full)), [], rel)
+        except Exception:
+            continue
+
+for rel, path, what in findings:
+    print(f"  {rel}: {path} ({what})")
+sys.exit(1 if findings else 0)
+PYEOF
+}
+
 secrets_require_age() {
   command_exists age || error_exit "age is not installed (brew install age)"
 }
@@ -237,13 +315,20 @@ dotfiles_secrets_seal() {
   fi
   [ "${#profiles[@]}" -gt 0 ] || { warning "No profiles defined in $SECRETS_PROFILES_CONF"; return 0; }
 
-  local profile stage tar_path hash prev count changed=0
+  local profile stage tar_path hash prev count guard_output changed=0
   for profile in "${profiles[@]}"; do
     stage="$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-seal.XXXXXX")"
     if ! count="$(secrets_stage "$profile" "$stage")"; then
       info "$profile: nothing on this machine to seal, skipping"
       rm -rf "$stage"
       continue
+    fi
+
+    if ! guard_output="$(secrets_scan_for_plaintext_secrets "$stage")"; then
+      rm -rf "$stage"
+      warning "Refusing to seal $profile — these look like live credentials:"
+      printf '%s\n' "$guard_output"
+      error_exit "bundles are published; move these into the keychain, then re-seal"
     fi
 
     tar_path="$(mktemp "${TMPDIR:-/tmp}/dotfiles-tar.XXXXXX")"
@@ -353,7 +438,7 @@ dotfiles_reauth() {
   local root; root="$(secrets_config_root)"
   local dir base file found=""
 
-  info "Checking agent-* tools for profiles that still need authenticating"
+  info "agent-* profiles whose secrets live in this machine's keychain"
 
   for dir in "$root"/agent-* "$root"/app.paulie.agent-*; do
     [ -d "$dir" ] || continue
@@ -405,8 +490,8 @@ PYEOF
   done
 
   echo ""
-  info "Each line is a profile whose secret lives in this machine's keychain."
-  info "On a new machine, re-authenticate with that tool's own auth command"
-  info "(e.g. 'agent-dd auth --help'); generate a fresh credential where the"
-  info "service allows it, rather than copying the old one."
+  info "Each needs authenticating on a new machine. This lists what exists"
+  info "here, not what is missing there — the family has no shared registry of"
+  info "keychain service names to diff against. Use each tool's own auth"
+  info "command, and mint a fresh credential where the service allows it."
 }
