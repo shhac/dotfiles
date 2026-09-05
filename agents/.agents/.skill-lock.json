@@ -375,9 +375,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/shhac/skills.git",
       "skillPath": "skills/pr-issue-review/SKILL.md",
-      "skillFolderHash": "dd7987c152fddf2287e6d1286604d3023a63cbf2",
+      "skillFolderHash": "588573978f34a302e268246331b488fea2e4227c",
       "installedAt": "2026-06-09T11:51:42.638Z",
-      "updatedAt": "2026-08-31T21:40:21.568Z"
+      "updatedAt": "2026-09-05T00:49:13.276Z"
     },
     "agent-slack": {
       "source": "shhac/agent-skills",
